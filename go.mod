@@ -30,14 +30,14 @@ require (
 	github.com/openzipkin-contrib/zipkin-go-opentracing v0.3.5
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.3.0
-	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4
+	github.com/prometheus/client_model v0.1.0
 	github.com/prometheus/common v0.7.0
 	github.com/tinylib/msgp v1.1.0 // indirect
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5 // indirect
 	go.etcd.io/etcd v0.5.0-alpha.5.0.20190917205325-a14579fbfb1a
 	golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553 // indirect
-	golang.org/x/sys v0.0.0-20191210023423-ac6580df4449
+	golang.org/x/sys v0.0.0-20191220142924-d4481acd189f
 	google.golang.org/api v0.14.0
 	google.golang.org/grpc v1.25.1
 	gopkg.in/DataDog/dd-trace-go.v1 v1.19.0
