@@ -50,6 +50,7 @@ forward FROM TO... {
     tls_servername NAME
     policy random|round_robin|sequential
     health_check DURATION
+    max_queries MAX
 }
 ~~~
 
@@ -83,6 +84,11 @@ forward FROM TO... {
   * `round_robin` is a policy that selects hosts based on round robin ordering.
   * `sequential` is a policy that selects hosts based on sequential ordering.
 * `health_check`, use a different **DURATION** for health checking, the default duration is 0.5s.
+* `max_concurrent` **MAX** will limit the number of concurrent queries to **MAX**.  Any new query that would
+  raise the number of concurrent queries above the **MAX** will result in a SERVFAIL response. This
+  response does not count as a health failure. When choosing a value for **MAX**, pick a number
+  at least greater than the expected *upstream query rate* * *latency* of the upstream servers.
+  As an upper bound for **MAX**, consider that each concurrent query will use about 2kb of memory.
 
 Also note the TLS config is "global" for the whole forwarding proxy if you need a different
 `tls-name` for different upstreams you're out of luck.
@@ -102,7 +108,8 @@ If monitoring is enabled (via the *prometheus* plugin) then the following metric
 * `coredns_forward_healthcheck_failure_count_total{to}` - number of failed health checks per upstream.
 * `coredns_forward_healthcheck_broken_count_total{}` - counter of when all upstreams are unhealthy,
   and we are randomly (this always uses the `random` policy) spraying to an upstream.
-
+* `max_concurrent_reject_count_total{}` - counter of the number of queries rejected because the
+  number of concurrent queries were at maximum.
 Where `to` is one of the upstream servers (**TO** from the config), `rcode` is the returned RCODE
 from the upstream.
 

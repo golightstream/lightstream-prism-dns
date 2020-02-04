@@ -8,6 +8,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"sync/atomic"
 	"time"
 
 	"github.com/coredns/coredns/plugin"
@@ -25,6 +26,8 @@ var log = clog.NewWithPlugin("forward")
 // Forward represents a plugin instance that can proxy requests to another (DNS) server. It has a list
 // of proxies each representing one upstream proxy.
 type Forward struct {
+	concurrent int64 // atomic counters need to be first in struct for proper alignment
+
 	proxies    []*Proxy
 	p          policy.Policy
 	hcInterval time.Duration
@@ -36,8 +39,13 @@ type Forward struct {
 	tlsServerName string
 	maxfails      uint32
 	expire        time.Duration
+	maxConcurrent int64
 
 	opts options // also here for testing
+
+	// ErrLimitExceeded indicates that a query was rejected because the number of concurrent queries has exceeded
+	// the maximum allowed (maxConcurrent)
+	ErrLimitExceeded error
 
 	Next plugin.Handler
 }
@@ -66,6 +74,15 @@ func (f *Forward) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg
 	state := request.Request{W: w, Req: r}
 	if !f.match(state) {
 		return plugin.NextOrFailure(f.Name(), f.Next, ctx, w, r)
+	}
+
+	if f.maxConcurrent > 0 {
+		count := atomic.AddInt64(&(f.concurrent), 1)
+		defer atomic.AddInt64(&(f.concurrent), -1)
+		if count > f.maxConcurrent {
+			MaxConcurrentRejectCount.Add(1)
+			return dns.RcodeServerFailure, f.ErrLimitExceeded
+		}
 	}
 
 	fails := 0

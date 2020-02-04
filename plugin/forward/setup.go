@@ -1,6 +1,7 @@
 package forward
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -121,6 +122,7 @@ func parseStanza(c *caddy.Controller) (*Forward, error) {
 		}
 		f.proxies[i].SetExpire(f.expire)
 	}
+
 	return f, nil
 }
 
@@ -211,6 +213,19 @@ func parseBlock(c *caddy.Controller, f *Forward) error {
 		default:
 			return c.Errf("unknown policy '%s'", x)
 		}
+	case "max_concurrent":
+		if !c.NextArg() {
+			return c.ArgErr()
+		}
+		n, err := strconv.Atoi(c.Val())
+		if err != nil {
+			return err
+		}
+		if n < 0 {
+			return fmt.Errorf("max_concurrent can't be negative: %d", n)
+		}
+		f.ErrLimitExceeded = errors.New("concurrent queries exceeded maximum " + c.Val())
+		f.maxConcurrent = int64(n)
 
 	default:
 		return c.Errf("unknown property '%s'", c.Val())
