@@ -6,38 +6,53 @@ import (
 	"testing"
 
 	"github.com/coredns/coredns/plugin/pkg/dnstest"
+	"github.com/coredns/coredns/plugin/pkg/fall"
 	"github.com/coredns/coredns/plugin/test"
 
 	"github.com/miekg/dns"
 )
 
 func TestLookupA(t *testing.T) {
-	h := Hosts{
-		Next: test.ErrorHandler(),
-		Hostsfile: &Hostsfile{
-			Origins: []string{"."},
-			hmap:    newMap(),
-			inline:  newMap(),
-			options: newOptions(),
-		},
-	}
-	h.hmap = h.parse(strings.NewReader(hostsExample))
-
-	ctx := context.TODO()
-
 	for _, tc := range hostsTestCases {
 		m := tc.Msg()
 
+		var tcFall fall.F
+		isFall := tc.Qname == "fallthrough-example.org."
+		if isFall {
+			tcFall = fall.Root
+		} else {
+			tcFall = fall.Zero
+		}
+
+		h := Hosts{
+			Next: test.NextHandler(dns.RcodeNameError, nil),
+			Hostsfile: &Hostsfile{
+				Origins: []string{"."},
+				hmap:    newMap(),
+				inline:  newMap(),
+				options: newOptions(),
+			},
+			Fall: tcFall,
+		}
+		h.hmap = h.parse(strings.NewReader(hostsExample))
+
 		rec := dnstest.NewRecorder(&test.ResponseWriter{})
-		_, err := h.ServeDNS(ctx, rec, m)
+
+		rcode, err := h.ServeDNS(context.Background(), rec, m)
 		if err != nil {
 			t.Errorf("Expected no error, got %v", err)
 			return
 		}
 
-		resp := rec.Msg
-		if err := test.SortAndCheck(resp, tc); err != nil {
-			t.Error(err)
+		if isFall && tc.Rcode != rcode {
+			t.Errorf("Expected rcode is %d, but got %d", tc.Rcode, rcode)
+			return
+		}
+
+		if resp := rec.Msg; rec.Msg != nil {
+			if err := test.SortAndCheck(resp, tc); err != nil {
+				t.Error(err)
+			}
 		}
 	}
 }
@@ -88,6 +103,10 @@ var hostsTestCases = []test.Case{
 		Qname: "example.org.", Qtype: dns.TypeMX,
 		Answer: []dns.RR{},
 	},
+	{
+		Qname: "fallthrough-example.org.", Qtype: dns.TypeAAAA,
+		Answer: []dns.RR{}, Rcode: dns.RcodeSuccess,
+	},
 }
 
 const hostsExample = `
@@ -95,6 +114,7 @@ const hostsExample = `
 ::1 localhost localhost.domain
 10.0.0.1 example.org
 ::FFFF:10.0.0.2 example.com
+10.0.0.3 fallthrough-example.org
 reload 5s
 timeout 3600
 `
