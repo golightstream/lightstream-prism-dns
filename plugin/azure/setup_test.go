@@ -18,34 +18,30 @@ func TestSetup(t *testing.T) {
     tenant
 }`, true},
 		{`azure resource_set:zone {
-    tenant
-}`, true},
+    tenant abc
+}`, false},
 		{`azure resource_set:zone {
     client
 }`, true},
 		{`azure resource_set:zone {
-    secret
-}`, true},
+    client abc
+}`, false},
 		{`azure resource_set:zone {
     subscription
 }`, true},
 		{`azure resource_set:zone {
-    upstream 10.0.0.1
-}`, true},
-
+    subscription abc
+}`, false},
 		{`azure resource_set:zone {
-    upstream
-}`, true},
-		{`azure resource_set:zone {
-    foobar
+    foo
 }`, true},
 		{`azure resource_set:zone {
     tenant tenant_id
     client client_id
     secret client_secret
     subscription subscription_id
+    access public
 }`, false},
-
 		{`azure resource_set:zone {
     fallthrough
 }`, false},
@@ -56,16 +52,19 @@ func TestSetup(t *testing.T) {
 			fallthrough
 		}`, true},
 		{`azure resource_set:zone,zone2 {
-			fallthrough
+			access private
 		}`, false},
-		{`azure resource-set {
-			fallthrough
+		{`azure resource-set:zone {
+			access public
+		}`, false},
+		{`azure resource-set:zone {
+			access foo
 		}`, true},
 	}
 
 	for i, test := range tests {
 		c := caddy.NewTestController("dns", test.body)
-		if _, _, _, err := parse(c); (err == nil) == test.expectedError {
+		if _, _, _, _, err := parse(c); (err == nil) == test.expectedError {
 			t.Fatalf("Unexpected errors: %v in test: %d\n\t%s", err, i, test.body)
 		}
 	}
