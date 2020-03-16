@@ -34,14 +34,14 @@ require (
 	github.com/tinylib/msgp v1.1.0 // indirect
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5 // indirect
 	go.etcd.io/etcd v0.5.0-alpha.5.0.20200306183522-221f0cc107cb
-	golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413
+	golang.org/x/crypto v0.0.0-20200220183623-bac4c82f6975
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect
 	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527
 	google.golang.org/api v0.20.0
 	google.golang.org/genproto v0.0.0-20200306153348-d950eab6f860 // indirect
 	google.golang.org/grpc v1.28.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.22.0
-	k8s.io/api v0.17.3
+	k8s.io/api v0.17.4
 	k8s.io/apimachinery v0.17.4
 	k8s.io/client-go v0.17.4
 	k8s.io/klog v1.0.0
