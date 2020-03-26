@@ -33,7 +33,7 @@ Currently CoreDNS is able to:
 * Use etcd as a backend (replacing [SkyDNS](https://github.com/skynetservices/skydns)) (*etcd*).
 * Use k8s (kubernetes) as a backend (*kubernetes*).
 * Serve as a proxy to forward queries to some other (recursive) nameserver (*forward*).
-* Provide metrics (by using Prometheus) (*metrics*).
+* Provide metrics (by using Prometheus) (*prometheus*).
 * Provide query (*log*) and error (*errors*) logging.
 * Integrate with cloud providers (*route53*).
 * Support the CH class: `version.bind` and friends (*chaos*).

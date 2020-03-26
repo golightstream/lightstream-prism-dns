@@ -77,7 +77,7 @@ If monitoring is enabled (via the *prometheus* plugin) then the following metric
 * `coredns_cache_served_stale_total{server}` - Counter of requests served from stale cache entries.
 
 Cache types are either "denial" or "success". `Server` is the server handling the request, see the
-metrics plugin for documentation.
+prometheus plugin for documentation.
 
 ## Examples
 
