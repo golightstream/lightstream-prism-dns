@@ -41,6 +41,7 @@ Currently CoreDNS is able to:
 * Profiling support (*pprof*).
 * Rewrite queries (qtype, qclass and qname) (*rewrite* and *template*).
 * Block ANY queries (*any*).
+* Provide DNS64 IPv6 Translation (*dns64*).
 
 And more. Each of the plugins is documented. See [coredns.io/plugins](https://coredns.io/plugins)
 for all in-tree plugins, and [coredns.io/explugins](https://coredns.io/explugins) for all
