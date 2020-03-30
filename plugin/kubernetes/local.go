@@ -35,24 +35,3 @@ func boundIPs(c *caddy.Controller) (ips []net.IP) {
 	}
 	return ips
 }
-
-// LocalNodeName is exclusively used in federation plugin, will be deprecated later.
-func (k *Kubernetes) LocalNodeName() string {
-	if len(k.localIPs) == 0 {
-		return ""
-	}
-
-	// Find fist endpoint matching any localIP
-	for _, localIP := range k.localIPs {
-		for _, ep := range k.APIConn.EpIndexReverse(localIP.String()) {
-			for _, eps := range ep.Subsets {
-				for _, addr := range eps.Addresses {
-					if localIP.Equal(net.ParseIP(addr.IP)) {
-						return addr.NodeName
-					}
-				}
-			}
-		}
-	}
-	return ""
-}

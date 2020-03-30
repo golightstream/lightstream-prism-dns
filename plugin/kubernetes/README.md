@@ -182,20 +182,6 @@ be set to `verified` for this to function properly.
         }
     }
 
-## Federation
-
-The *kubernetes* plugin can be used in conjunction with the *federation* plugin.  Using this
-feature enables serving federated domains from the Kubernetes clusters.
-
-    cluster.local {
-        federation {
-            prod prod.example.org
-            staging staging.example.org
-        }
-        kubernetes
-    }
-
-
 ## Wildcards
 
 Some query labels accept a wildcard value to match any value.  If a label is a valid wildcard (\*,

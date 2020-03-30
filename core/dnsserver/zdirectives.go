@@ -42,7 +42,6 @@ var Directives = []string{
 	"route53",
 	"azure",
 	"clouddns",
-	"federation",
 	"k8s_external",
 	"kubernetes",
 	"file",

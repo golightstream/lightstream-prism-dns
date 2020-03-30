@@ -13,7 +13,6 @@ require (
 	github.com/aws/aws-sdk-go v1.29.34
 	github.com/caddyserver/caddy v1.0.5
 	github.com/cenkalti/backoff/v4 v4.0.0
-	github.com/coredns/federation v0.0.0-20190818181423-e032b096babe
 	github.com/dnstap/golang-dnstap v0.0.0-20170829151710-2cf77a2b5e11
 	github.com/farsightsec/golang-framestream v0.0.0-20181102145529-8a0cb8ba8710
 	github.com/golang/groupcache v0.0.0-20190129154638-5b532d6fd5ef // indirect
