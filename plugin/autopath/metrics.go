@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	// autoPathCount is counter of successfully autopath-ed queries.
 	autoPathCount = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Namespace: plugin.Namespace,
 		Subsystem: "autopath",

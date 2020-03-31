@@ -76,7 +76,7 @@ hosts [FILE [ZONES...]] {
 
 If monitoring is enabled (via the *prometheus* plugin) then the following metrics are exported:
 
-- `coredns_hosts_entries_count{}` - The combined number of entries in hosts and Corefile.
+- `coredns_hosts_entries{}` - The combined number of entries in hosts and Corefile.
 - `coredns_hosts_reload_timestamp_seconds{}` - The timestamp of the last reload of hosts file.
 
 ## Examples

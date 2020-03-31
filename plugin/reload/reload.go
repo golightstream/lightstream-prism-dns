@@ -107,7 +107,7 @@ func hook(event caddy.EventName, info interface{}) error {
 					reloadInfo.WithLabelValues("md5", hex.EncodeToString(md5sum[:])).Set(1)
 					if err != nil {
 						log.Errorf("Corefile changed but reload failed: %s", err)
-						FailedCount.Add(1)
+						failedCount.Add(1)
 						continue
 					}
 					// we are done, if the plugin was not set used, then it is not.

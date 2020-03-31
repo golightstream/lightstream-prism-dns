@@ -8,13 +8,14 @@ import (
 
 // Metrics for the reload plugin
 var (
-	FailedCount = prometheus.NewCounter(prometheus.CounterOpts{
+	// failedCount is the counter of the number of failed reload attempts.
+	failedCount = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace: plugin.Namespace,
 		Subsystem: "reload",
 		Name:      "failed_total",
 		Help:      "Counter of the number of failed reload attempts.",
 	})
-
+	// reloadInfo is record the hash value during reload.
 	reloadInfo = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: plugin.Namespace,
 		Subsystem: "reload",
