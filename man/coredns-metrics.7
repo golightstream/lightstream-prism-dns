@@ -15,21 +15,19 @@ The following metrics are exported:
 .IP \(bu 4
 \fB\fCcoredns_build_info{version, revision, goversion}\fR - info about CoreDNS itself.
 .IP \(bu 4
-\fB\fCcoredns_panic_count_total{}\fR - total number of panics.
+\fB\fCcoredns_panics_total{}\fR - total number of panics.
 .IP \(bu 4
-\fB\fCcoredns_dns_request_count_total{server, zone, proto, family}\fR - total query count.
+\fB\fCcoredns_dns_requests_total{server, zone, proto, family, type}\fR - total query count.
 .IP \(bu 4
 \fB\fCcoredns_dns_request_duration_seconds{server, zone, type}\fR - duration to process each query.
 .IP \(bu 4
 \fB\fCcoredns_dns_request_size_bytes{server, zone, proto}\fR - size of the request in bytes.
 .IP \(bu 4
-\fB\fCcoredns_dns_request_do_count_total{server, zone}\fR -  queries that have the DO bit set
-.IP \(bu 4
-\fB\fCcoredns_dns_request_type_count_total{server, zone, type}\fR - counter of queries per zone and type.
+\fB\fCcoredns_dns_do_requests_total{server, zone}\fR -  queries that have the DO bit set
 .IP \(bu 4
 \fB\fCcoredns_dns_response_size_bytes{server, zone, proto}\fR - response size in bytes.
 .IP \(bu 4
-\fB\fCcoredns_dns_response_rcode_count_total{server, zone, rcode}\fR - response per zone and rcode.
+\fB\fCcoredns_dns_responses_total{server, zone, rcode}\fR - response per zone and rcode.
 .IP \(bu 4
 \fB\fCcoredns_plugin_enabled{server, zone, name}\fR - indicates whether a plugin is enabled on per server and zone basis.
 
@@ -52,8 +50,6 @@ The address family (\fB\fCfamily\fR) of the transport (1 = IP (IP version 4), 2 
 \fB\fCtype\fR which holds the query type. It holds most common types (A, AAAA, MX, SOA, CNAME, PTR, TXT,
 NS, SRV, DS, DNSKEY, RRSIG, NSEC, NSEC3, IXFR, AXFR and ANY) and "other" which lumps together all
 other types.
-.IP \(bu 4
-The \fB\fCresponse_rcode_count_total\fR has an extra label \fB\fCrcode\fR which holds the rcode of the response.
 
 
 .PP
