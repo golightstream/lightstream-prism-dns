@@ -202,8 +202,6 @@ func ParseStanza(c *caddy.Controller) (*Kubernetes, error) {
 				continue
 			}
 			return nil, c.ArgErr()
-		case "resyncperiod":
-			continue
 		case "labels":
 			args := c.RemainingArgs()
 			if len(args) > 0 {
@@ -230,9 +228,6 @@ func ParseStanza(c *caddy.Controller) (*Kubernetes, error) {
 			return nil, c.ArgErr()
 		case "fallthrough":
 			k8s.Fall.SetZonesFromArgs(c.RemainingArgs())
-		case "upstream":
-			// remove soon
-			c.RemainingArgs() // eat remaining args
 		case "ttl":
 			args := c.RemainingArgs()
 			if len(args) == 0 {
