@@ -32,8 +32,6 @@ var metadataCases = []struct {
 			"kubernetes/port-name":        "*",
 			"kubernetes/protocol":         "*",
 			"kubernetes/service":          "10-240-0-1",
-			"kubernetes/client-namespace": "podns",
-			"kubernetes/client-pod-name":  "foo",
 		},
 	},
 	{
@@ -45,8 +43,6 @@ var metadataCases = []struct {
 			"kubernetes/port-name":        "*",
 			"kubernetes/protocol":         "*",
 			"kubernetes/service":          "s",
-			"kubernetes/client-namespace": "podns",
-			"kubernetes/client-pod-name":  "foo",
 		},
 	},
 	{
@@ -122,5 +118,39 @@ func TestMetadata(t *testing.T) {
 		if mapsDiffer(tc.Md, md) {
 			t.Errorf("Case %d expected metadata %v and got %v", i, tc.Md, md)
 		}
+	}
+}
+
+func TestMetadataPodsVerified(t *testing.T) {
+	k := New([]string{"cluster.local."})
+	k.podMode = podModeVerified
+	k.APIConn = &APIConnServeTest{}
+
+	ctx := metadata.ContextWithMetadata(context.Background())
+	state := request.Request{
+		Req:  &dns.Msg{Question: []dns.Question{{Name: "s.ns.svc.cluster.local.", Qtype: dns.TypeA}}},
+		Zone: ".",
+		W:    &test.ResponseWriter{},
+	}
+
+	k.Metadata(ctx, state)
+
+	expect := map[string]string{
+		"kubernetes/endpoint":  "",
+		"kubernetes/kind":      "svc",
+		"kubernetes/namespace": "ns",
+		"kubernetes/port-name": "*",
+		"kubernetes/protocol":  "*",
+		"kubernetes/service":   "s",
+		"kubernetes/client-namespace": "podns",
+		"kubernetes/client-pod-name":  "foo",
+	}
+
+	md := make(map[string]string)
+	for _, l := range metadata.Labels(ctx) {
+		md[l] = metadata.ValueFunc(ctx, l)()
+	}
+	if mapsDiffer(expect, md) {
+		t.Errorf("Expected metadata %v and got %v", expect, md)
 	}
 }
