@@ -3,7 +3,6 @@ module github.com/coredns/coredns
 go 1.13
 
 require (
-	cloud.google.com/go v0.55.0 // indirect
 	github.com/Azure/azure-sdk-for-go v40.6.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.10.1
 	github.com/Azure/go-autorest/autorest/azure/auth v0.4.2
@@ -36,10 +35,8 @@ require (
 	go.etcd.io/etcd v0.5.0-alpha.5.0.20200306183522-221f0cc107cb
 	go.uber.org/zap v1.14.1 // indirect
 	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
-	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
 	golang.org/x/sys v0.0.0-20200420163511-1957bb5e6d1f
 	google.golang.org/api v0.23.0
-	google.golang.org/genproto v0.0.0-20200326112834-f447254575fd // indirect
 	google.golang.org/grpc v1.29.1
 	gopkg.in/DataDog/dd-trace-go.v1 v1.23.2
 	k8s.io/api v0.18.2
