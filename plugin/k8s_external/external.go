@@ -16,6 +16,7 @@ import (
 
 	"github.com/coredns/coredns/plugin"
 	"github.com/coredns/coredns/plugin/etcd/msg"
+	"github.com/coredns/coredns/plugin/pkg/upstream"
 	"github.com/coredns/coredns/request"
 
 	"github.com/miekg/dns"
@@ -38,6 +39,8 @@ type External struct {
 	hostmaster string
 	apex       string
 	ttl        uint32
+
+	upstream *upstream.Upstream
 
 	externalFunc     func(request.Request) ([]msg.Service, int)
 	externalAddrFunc func(request.Request) []dns.RR
@@ -90,9 +93,9 @@ func (e *External) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Ms
 
 	switch state.QType() {
 	case dns.TypeA:
-		m.Answer = e.a(svc, state)
+		m.Answer = e.a(ctx, svc, state)
 	case dns.TypeAAAA:
-		m.Answer = e.aaaa(svc, state)
+		m.Answer = e.aaaa(ctx, svc, state)
 	case dns.TypeSRV:
 		m.Answer, m.Extra = e.srv(svc, state)
 	default:

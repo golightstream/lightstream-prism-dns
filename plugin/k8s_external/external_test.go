@@ -41,6 +41,7 @@ func TestExternal(t *testing.T) {
 		}
 
 		resp := w.Msg
+
 		if resp == nil {
 			t.Fatalf("Test %d, got nil message and no error for %q", i, r.Question[0].Name)
 		}
@@ -147,21 +148,33 @@ var tests = []test.Case{
 			test.SOA("example.com.	5	IN	SOA	ns1.dns.example.com. hostmaster.example.com. 1499347823 7200 1800 86400 5"),
 		},
 	},
+	{
+		Qname: "svc11.testns.example.com.", Qtype: dns.TypeA, Rcode: dns.RcodeSuccess,
+		Answer: []dns.RR{
+			test.A("svc11.testns.example.com.	5	IN	A	1.2.3.4"),
+		},
+	},
+	{
+		Qname: "svc12.testns.example.com.", Qtype: dns.TypeA, Rcode: dns.RcodeSuccess,
+		Answer: []dns.RR{
+			test.CNAME("svc12.testns.example.com.	5	IN	CNAME	dummy.hostname"),
+		},
+	},
 }
 
 type external struct{}
 
-func (external) HasSynced() bool                              { return true }
-func (external) Run()                                         {}
-func (external) Stop() error                                  { return nil }
-func (external) EpIndexReverse(string) []*object.Endpoints    { return nil }
-func (external) SvcIndexReverse(string) []*object.Service     { return nil }
-func (external) Modified() int64                              { return 0 }
-func (external) EpIndex(s string) []*object.Endpoints         { return nil }
-func (external) EndpointsList() []*object.Endpoints           { return nil }
+func (external) HasSynced() bool                                                   { return true }
+func (external) Run()                                                              {}
+func (external) Stop() error                                                       { return nil }
+func (external) EpIndexReverse(string) []*object.Endpoints                         { return nil }
+func (external) SvcIndexReverse(string) []*object.Service                          { return nil }
+func (external) Modified() int64                                                   { return 0 }
+func (external) EpIndex(s string) []*object.Endpoints                              { return nil }
+func (external) EndpointsList() []*object.Endpoints                                { return nil }
 func (external) GetNodeByName(ctx context.Context, name string) (*api.Node, error) { return nil, nil }
-func (external) SvcIndex(s string) []*object.Service          { return svcIndexExternal[s] }
-func (external) PodIndex(string) []*object.Pod                { return nil }
+func (external) SvcIndex(s string) []*object.Service                               { return svcIndexExternal[s] }
+func (external) PodIndex(string) []*object.Pod                                     { return nil }
 
 func (external) GetNamespaceByName(name string) (*api.Namespace, error) {
 	return &api.Namespace{
@@ -189,6 +202,24 @@ var svcIndexExternal = map[string][]*object.Service{
 			Type:        api.ServiceTypeClusterIP,
 			ClusterIP:   "10.0.0.3",
 			ExternalIPs: []string{"1:2::5"},
+			Ports:       []api.ServicePort{{Name: "http", Protocol: "tcp", Port: 80}},
+		},
+	},
+	"svc11.testns": {
+		{
+			Name:        "svc11",
+			Namespace:   "testns",
+			Type:        api.ServiceTypeLoadBalancer,
+			ExternalIPs: []string{"1.2.3.4"},
+			Ports:       []api.ServicePort{{Name: "http", Protocol: "tcp", Port: 80}},
+		},
+	},
+	"svc12.testns": {
+		{
+			Name:        "svc12",
+			Namespace:   "testns",
+			Type:        api.ServiceTypeLoadBalancer,
+			ExternalIPs: []string{"dummy.hostname"},
 			Ports:       []api.ServicePort{{Name: "http", Protocol: "tcp", Port: 80}},
 		},
 	},
