@@ -1,6 +1,7 @@
 package object
 
 import (
+	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/cache"
 )
@@ -20,8 +21,10 @@ func NewIndexerInformer(lw cache.ListerWatcher, objType runtime.Object, h cache.
 	return clientState, cache.New(cfg)
 }
 
-// DefaultProcessor is a copy of Process function from cache.NewIndexerInformer except it does a conversion.
-func DefaultProcessor(convert ToFunc) ProcessorBuilder {
+type recordLatencyFunc func(meta.Object)
+
+// DefaultProcessor is based on the Process function from cache.NewIndexerInformer except it does a conversion.
+func DefaultProcessor(convert ToFunc, recordLatency recordLatencyFunc) ProcessorBuilder {
 	return func(clientState cache.Indexer, h cache.ResourceEventHandler) cache.ProcessFunc {
 		return func(obj interface{}) error {
 			for _, d := range obj.(cache.Deltas) {
@@ -42,23 +45,27 @@ func DefaultProcessor(convert ToFunc) ProcessorBuilder {
 						}
 						h.OnAdd(obj)
 					}
+					if recordLatency != nil {
+						recordLatency(d.Object.(meta.Object))
+					}
 				case cache.Deleted:
 					var obj interface{}
-					var err error
-					tombstone, ok := d.Object.(cache.DeletedFinalStateUnknown)
-					if ok {
-						obj, err = convert(tombstone.Obj)
-					} else {
+					obj, ok := d.Object.(cache.DeletedFinalStateUnknown)
+					if !ok {
+						var err error
 						obj, err = convert(d.Object)
-					}
-					if err != nil && err != errPodTerminating {
-						return err
+						if err != nil && err != errPodTerminating {
+							return err
+						}
 					}
 
 					if err := clientState.Delete(obj); err != nil {
 						return err
 					}
 					h.OnDelete(obj)
+					if !ok && recordLatency != nil {
+						recordLatency(d.Object.(meta.Object))
+					}
 				}
 			}
 			return nil
