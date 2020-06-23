@@ -12,10 +12,13 @@ import (
 
 func TestWhoami(t *testing.T) {
 	wh := Whoami{}
-
+	if wh.Name() != name {
+		t.Errorf("expected plugin name: %s, got %s", wh.Name(), name)
+	}
 	tests := []struct {
 		qname         string
 		qtype         uint16
+		remote        string
 		expectedCode  int
 		expectedReply []string // ownernames for the records in the additional section.
 		expectedErr   error
@@ -35,6 +38,22 @@ func TestWhoami(t *testing.T) {
 			expectedReply: []string{"Example.ORG.", "_udp.Example.ORG."},
 			expectedErr:   nil,
 		},
+		{
+			qname:         "example.org",
+			qtype:         dns.TypeA,
+			remote:        "2003::1/64",
+			expectedCode:  dns.RcodeSuccess,
+			expectedReply: []string{"example.org.", "_udp.example.org."},
+			expectedErr:   nil,
+		},
+		{
+			qname:         "Example.ORG",
+			qtype:         dns.TypeA,
+			remote:        "2003::1/64",
+			expectedCode:  dns.RcodeSuccess,
+			expectedReply: []string{"Example.ORG.", "_udp.Example.ORG."},
+			expectedErr:   nil,
+		},
 	}
 
 	ctx := context.TODO()
@@ -42,10 +61,8 @@ func TestWhoami(t *testing.T) {
 	for i, tc := range tests {
 		req := new(dns.Msg)
 		req.SetQuestion(dns.Fqdn(tc.qname), tc.qtype)
-
-		rec := dnstest.NewRecorder(&test.ResponseWriter{})
+		rec := dnstest.NewRecorder(&test.ResponseWriter{RemoteIP: tc.remote})
 		code, err := wh.ServeDNS(ctx, rec, req)
-
 		if err != tc.expectedErr {
 			t.Errorf("Test %d: Expected error %v, but got %v", i, tc.expectedErr, err)
 		}
