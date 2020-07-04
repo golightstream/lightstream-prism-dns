@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"os"
 	"runtime"
 	"strings"
@@ -75,6 +76,31 @@ func Run() {
 		mustLogFatal(err)
 	}
 
+	ifaces, err := net.Interfaces()
+
+	log.Printf(
+		" _\n" +
+			"| |   (_) __ _| |__ | |_ ___| |_ _ __ ___  __ _ _ __ ___\n" +
+			"| |   | |/ _``| '_ \\| __/ __| __| '__/ _ \\/ _` | '_ ` _ \\\n" +
+			"| |___| | (_| | | | | |_\\__ \\ |_| | |  __/ (_| | | | | | |\n" +
+			"|_____|_|\\__, |_| |_|\\__|___/\\__|_|  \\___|\\__,_|_| |_| |_|\n" +
+			"         |___/")
+
+	log.Printf("Lightstream CoreDNS server listening on:")
+	for _, i := range ifaces {
+		if addrs, err := i.Addrs(); err == nil {
+			for _, addr := range addrs {
+				switch v := addr.(type) {
+				case *net.IPNet:
+					if v.IP.To4() != nil {
+						log.Printf("-> %s", v.IP)
+					}
+				}
+			}
+		}
+	}
+
+	log.Printf("If listening fails with permission denied, please run in privileged mode (Admin/Root)")
 	// Start your engines
 	instance, err := caddy.Start(corefile)
 	if err != nil {
@@ -104,8 +130,23 @@ func mustLogFatal(args ...interface{}) {
 
 // confLoader loads the Caddyfile using the -conf flag.
 func confLoader(serverType string) (caddy.Input, error) {
+	defaultConfString := `
+	. {
+		forward . 1.1.1.1 8.8.8.8
+		rewrite stop {
+		    name regex live(.*).twitch.tv live{1}.int01.golightstream.com
+		    answer name live(.*).int01.golightstream.com live{1}.twitch.tv
+		}
+		log . {
+			class all
+		}
+	}`
 	if conf == "" {
-		return nil, nil
+		return caddy.CaddyfileInput{
+			Contents:       []byte(defaultConfString),
+			Filepath:       conf,
+			ServerTypeName: serverType,
+		}, nil
 	}
 
 	if conf == "stdin" {
