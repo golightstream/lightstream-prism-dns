@@ -1,5 +1,11 @@
 This is a light fork of the CoreDNS application to allow a 1-click dns server for the purposes of Lightstream Prism.
 
+## This README will be updated shortly to reflect setup instructions for Lightstream Prism.
+
+
+
+### For reference the default CoreDNS project is located below.
+
 
 [![CoreDNS](https://coredns.io/images/CoreDNS_Colour_Horizontal.png)](https://coredns.io)
 
