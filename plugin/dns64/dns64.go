@@ -75,9 +75,9 @@ func (d *DNS64) Name() string { return "dns64" }
 func requestShouldIntercept(req *request.Request) bool {
 	// Only intercept with this when the request came in over IPv6. This is not mentioned in the RFC.
 	// File an issue if you think we should translate even requests made using IPv4, or have a configuration flag
-	if req.Family() == 1 { // If it came in over v4, don't do anything.
-		return false
-	}
+	// if req.Family() == 1 { // If it came in over v4, don't do anything.
+	// 	return false
+	// }
 
 	// Do not modify if question is not AAAA or not of class IN. See RFC 6147 5.1
 	return req.QType() == dns.TypeAAAA && req.QClass() == dns.ClassINET

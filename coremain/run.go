@@ -14,7 +14,30 @@ import (
 	"github.com/coredns/coredns/core/dnsserver"
 
 	"github.com/caddyserver/caddy"
+
+	"github.com/blang/semver"
+	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
+
+func doSelfUpdate() {
+	v := semver.MustParse(appVersion)
+	latest, err := selfupdate.UpdateSelf(v, "golightstream/lightstream-prism-dns")
+	if err != nil {
+		log.Println("Binary update failed:", err)
+		return
+	}
+	if latest.Version.LTE(v) {
+		// latest version is the same as current version. It means current binary is up to date.
+		if latest.Version.Equals(v) {
+			log.Println("Current binary is the latest version", v)
+		} else {
+			log.Printf("You have an unreleased/newer version than latest; %v > latest (%v)\n", v, latest.Version)
+		}
+	} else {
+		log.Println("Successfully updated to version", latest.Version)
+		log.Println("Release note:\n", latest.ReleaseNotes)
+	}
+}
 
 func init() {
 	caddy.DefaultConfigFile = "Corefile"
@@ -86,6 +109,9 @@ func Run() {
 			"|_____|_|\\__, |_| |_|\\__|___/\\__|_|  \\___|\\__,_|_| |_| |_|\n" +
 			"         |___/")
 
+	doSelfUpdate()
+
+	log.Printf("App Version: %s", appVersion)
 	log.Printf("Lightstream CoreDNS server listening on:")
 	for _, i := range ifaces {
 		if addrs, err := i.Addrs(); err == nil {
@@ -133,9 +159,10 @@ func confLoader(serverType string) (caddy.Input, error) {
 	defaultConfString := `
 	. {
 		forward . 1.1.1.1 8.8.8.8
-		rewrite stop {
-		    name regex live(.*).twitch.tv live{1}.int01.golightstream.com
-		    answer name live(.*).int01.golightstream.com live{1}.twitch.tv
+		dns64
+		rewrite continue {
+			name regex live(.*).twitch.tv live{1}.int01.golightstream.com
+			answer name live(.*).int01.golightstream.com live{1}.twitch.tv
 		}
 		log . {
 			class all
@@ -206,6 +233,7 @@ func releaseString() string {
 // based on variables set by -ldflags.
 func setVersion() {
 	// A development build is one that's not at a tag or has uncommitted changes
+	gitTag = GitCommit
 	devBuild = gitTag == "" || gitShortStat != ""
 
 	// Only set the appVersion if -ldflags was used

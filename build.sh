@@ -1,11 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 build() {
   _BINARY=lightstream-prism-dns-$1-$2
   env GOOS=$1 GOARCH=$2 go build -o $_BINARY
   upx $_BINARY
-  if [[ "$GOOS" -eq "windows" ]]
-  then
+  if [ "$1" = "windows" ]; then
     mv $_BINARY $_BINARY.exe
   fi
 }

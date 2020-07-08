@@ -10,6 +10,7 @@ require (
 	github.com/Shopify/sarama v1.21.0 // indirect
 	github.com/apache/thrift v0.13.0 // indirect
 	github.com/aws/aws-sdk-go v1.32.11
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/caddyserver/caddy v1.0.5
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/dnstap/golang-dnstap v0.2.0
@@ -31,6 +32,7 @@ require (
 	github.com/prometheus/client_model v0.2.0
 	github.com/prometheus/common v0.10.0
 	github.com/prometheus/prometheus v2.5.0+incompatible
+	github.com/rhysd/go-github-selfupdate v1.2.2
 	github.com/tinylib/msgp v1.1.2 // indirect
 	go.etcd.io/etcd v0.5.0-alpha.5.0.20200306183522-221f0cc107cb
 	go.uber.org/zap v1.14.1 // indirect
