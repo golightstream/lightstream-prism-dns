@@ -46,6 +46,9 @@ func (w *hasTrailingWhitespaceWalker) walk(path string, info os.FileInfo, _ erro
 	if strings.HasPrefix(path, "../.") {
 		return nil
 	}
+	if strings.Contains(path, "/vendor") {
+		return nil
+	}
 
 	file, err := os.Open(path)
 	if err != nil {
@@ -100,6 +103,9 @@ func (w *hasHyphenWalker) walk(path string, info os.FileInfo, _ error) error {
 	if strings.HasPrefix(path, "../.") {
 		return nil
 	}
+	if strings.Contains(path, "/vendor") {
+		return nil
+	}
 	if filepath.Ext(path) != ".go" {
 		return nil
 	}
@@ -138,6 +144,9 @@ func (w *hasLowercaseWalker) walk(path string, info os.FileInfo, _ error) error 
 		return nil
 	}
 	if strings.HasPrefix(path, "../.") {
+		return nil
+	}
+	if strings.Contains(path, "/vendor") {
 		return nil
 	}
 	if !strings.HasSuffix(path, "_test.go") {
@@ -247,6 +256,9 @@ func (w *hasImportTestingWalker) walk(path string, info os.FileInfo, _ error) er
 	if strings.HasPrefix(path, "../.") {
 		return nil
 	}
+	if strings.Contains(path, "/vendor") {
+		return nil
+	}
 	if strings.HasSuffix(path, "_test.go") {
 		return nil
 	}
@@ -291,6 +303,9 @@ func (w *testImportOrderingWalker) walk(path string, info os.FileInfo, _ error) 
 		return nil
 	}
 	if strings.HasPrefix(path, "../.") {
+		return nil
+	}
+	if strings.Contains(path, "/vendor") {
 		return nil
 	}
 	if filepath.Ext(path) != ".go" {
