@@ -15,12 +15,10 @@ require (
 	github.com/dnstap/golang-dnstap v0.2.0
 	github.com/farsightsec/golang-framestream v0.0.0-20190425193708-fa4b164d59b8
 	github.com/golang/protobuf v1.4.2
-	github.com/gophercloud/gophercloud v0.9.0 // indirect
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/imdario/mergo v0.3.9 // indirect
 	github.com/infobloxopen/go-trees v0.0.0-20190313150506-2af4e13f9062
-	github.com/jessevdk/go-flags v1.4.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1
 	github.com/miekg/dns v1.1.31
 	github.com/opentracing-contrib/go-observer v0.0.0-20170622124052-a52f23424492 // indirect
@@ -41,5 +39,4 @@ require (
 	k8s.io/apimachinery v0.19.0
 	k8s.io/client-go v0.19.0
 	k8s.io/klog v1.0.0
-	sigs.k8s.io/structured-merge-diff/v3 v3.0.0 // indirect
 )
