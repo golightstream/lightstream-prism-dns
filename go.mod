@@ -7,8 +7,6 @@ require (
 	github.com/Azure/go-autorest/autorest v0.11.6
 	github.com/Azure/go-autorest/autorest/azure/auth v0.5.2
 	github.com/DataDog/datadog-go v3.5.0+incompatible // indirect
-	github.com/Shopify/sarama v1.21.0 // indirect
-	github.com/apache/thrift v0.13.0 // indirect
 	github.com/aws/aws-sdk-go v1.34.22
 	github.com/caddyserver/caddy v1.0.5
 	github.com/cenkalti/backoff/v4 v4.0.2
@@ -21,7 +19,6 @@ require (
 	github.com/infobloxopen/go-trees v0.0.0-20190313150506-2af4e13f9062
 	github.com/matttproud/golang_protobuf_extensions v1.0.1
 	github.com/miekg/dns v1.1.31
-	github.com/opentracing-contrib/go-observer v0.0.0-20170622124052-a52f23424492 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/openzipkin-contrib/zipkin-go-opentracing v0.4.5
 	github.com/openzipkin/zipkin-go v0.2.2
