@@ -10,6 +10,9 @@ With *cache* enabled, all records except zone transfers and metadata records wil
 3600s. Caching is mostly useful in a scenario when fetching data from the backend (upstream,
 database, etc.) is expensive.
 
+*Cache* will change the query to enable DNSSEC (DNSSEC OK; DO) if it passes through the plugin. If
+the client didn't request any DNSSEC (records), these are filtered out when replying.
+
 This plugin can only be used once per Server Block.
 
 ## Syntax

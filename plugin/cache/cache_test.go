@@ -46,17 +46,19 @@ var cacheTestCases = []cacheTestCase{
 	{
 		RecursionAvailable: true, AuthenticatedData: true,
 		Case: test.Case{
-			Qname: "mIEK.nL.", Qtype: dns.TypeMX,
+			Qname: "miek.nl.", Qtype: dns.TypeMX,
 			Answer: []dns.RR{
-				test.MX("mIEK.nL.	3600	IN	MX	1 aspmx.l.google.com."),
-				test.MX("mIEK.nL.	3600	IN	MX	10 aspmx2.googlemail.com."),
+				test.MX("miek.nl.	3600	IN	MX	1 aspmx.l.google.com."),
+				test.MX("miek.nl.	3600	IN	MX	10 aspmx2.googlemail.com."),
 			},
 		},
 		in: test.Case{
 			Qname: "mIEK.nL.", Qtype: dns.TypeMX,
 			Answer: []dns.RR{
-				test.MX("mIEK.nL.	3601	IN	MX	1 aspmx.l.google.com."),
-				test.MX("mIEK.nL.	3601	IN	MX	10 aspmx2.googlemail.com."),
+				test.MX("miek.nl.	3601	IN	MX	1 aspmx.l.google.com."),
+				test.MX("miek.nl.	3601	IN	MX	10 aspmx2.googlemail.com."),
+				// RRSIG must be here, because we are always doing DNSSEC lookups, and miek.nl MX is tested later in this list as well.
+				test.RRSIG("miek.nl.	3600	IN	RRSIG	MX 8 2 1800 20160521031301 20160421031301 12051 miek.nl. lAaEzB5teQLLKyDenatmyhca7blLRg9DoGNrhe3NReBZN5C5/pMQk8Jc u25hv2fW23/SLm5IC2zaDpp2Fzgm6Jf7e90/yLcwQPuE7JjS55WMF+HE LEh7Z6AEb+Iq4BWmNhUz6gPxD4d9eRMs7EAzk13o1NYi5/JhfL6IlaYy qkc="),
 			},
 		},
 		shouldCache: true,
@@ -136,7 +138,7 @@ var cacheTestCases = []cacheTestCase{
 				test.RRSIG("miek.nl.	1800	IN	RRSIG	MX 8 2 1800 20160521031301 20160421031301 12051 miek.nl. lAaEzB5teQLLKyDenatmyhca7blLRg9DoGNrhe3NReBZN5C5/pMQk8Jc u25hv2fW23/SLm5IC2zaDpp2Fzgm6Jf7e90/yLcwQPuE7JjS55WMF+HE LEh7Z6AEb+Iq4BWmNhUz6gPxD4d9eRMs7EAzk13o1NYi5/JhfL6IlaYy qkc="),
 			},
 		},
-		shouldCache: false,
+		shouldCache: true,
 	},
 	{
 		RecursionAvailable: true,
@@ -196,7 +198,7 @@ func TestCache(t *testing.T) {
 		state := request.Request{W: &test.ResponseWriter{}, Req: m}
 
 		mt, _ := response.Typify(m, utc)
-		valid, k := key(state.Name(), m, mt, state.Do())
+		valid, k := key(state.Name(), m, mt)
 
 		if valid {
 			crr.set(m, k, mt, c.pttl)
@@ -211,14 +213,16 @@ func TestCache(t *testing.T) {
 		}
 
 		if ok {
-			resp := i.toMsg(m, time.Now().UTC())
+			resp := i.toMsg(m, time.Now().UTC(), state.Do())
 
 			if err := test.Header(tc.Case, resp); err != nil {
+				t.Logf("Bla %v", resp)
 				t.Error(err)
 				continue
 			}
 
 			if err := test.Section(tc.Case, test.Answer, resp.Answer); err != nil {
+				t.Logf("Bla %v -- %v", test.Answer, resp.Answer)
 				t.Error(err)
 			}
 			if err := test.Section(tc.Case, test.Ns, resp.Ns); err != nil {
