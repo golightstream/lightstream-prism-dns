@@ -19,7 +19,6 @@ zonefile. New or changed zones are automatically picked up from disk only when S
 .nf
 auto [ZONES...] {
     directory DIR [REGEXP ORIGIN\_TEMPLATE]
-    transfer to ADDRESS...
     reload DURATION
 }
 
@@ -37,15 +36,13 @@ like \fB\fC{<number>}\fR are replaced with the respective matches in the file na
 first match, \fB\fC{2}\fR is the second. The default is: \fB\fCdb\.(.*)  {1}\fR i.e. from a file with the
 name \fB\fCdb.example.com\fR, the extracted origin will be \fB\fCexample.com\fR.
 .IP \(bu 4
-\fB\fCtransfer\fR enables zone transfers. It may be specified multiples times. \fB\fCTo\fR or \fB\fCfrom\fR signals
-the direction. \fBADDRESS\fP must be denoted in CIDR notation (e.g., 127.0.0.1/32) or just as plain
-addresses. The special wildcard \fB\fC*\fR means: the entire internet (only valid for 'transfer to').
-When an address is specified a notify message will be send whenever the zone is reloaded.
-.IP \(bu 4
 \fB\fCreload\fR interval to perform reloads of zones if SOA version changes and zonefiles. It specifies how often CoreDNS should scan the directory to watch for file removal and addition. Default is one minute.
 Value of \fB\fC0\fR means to not scan for changes and reload. eg. \fB\fC30s\fR checks zonefile every 30 seconds
 and reloads zone when serial changes.
 
+
+.PP
+For enabling zone transfers look at the \fItransfer\fP plugin.
 
 .PP
 All directives from the \fIfile\fP plugin are supported. Note that \fIauto\fP will load all zones found,
@@ -80,8 +77,10 @@ notifies to 10.240.1.1
 org {
     auto {
         directory /etc/coredns/zones/org
-        transfer to *
-        transfer to 10.240.1.1
+    }
+    transfer {
+        to *
+        to 10.240.1.1
     }
 }
 
@@ -105,4 +104,9 @@ org {
 
 .fi
 .RE
+
+.SH "ALSO"
+.PP
+Use the \fIroot\fP plugin to help you specify the location of the zone files. See the \fItransfer\fP plugin
+to enable outgoing zone transfers.
 

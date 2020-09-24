@@ -38,7 +38,6 @@ If you want to round-robin A and AAAA responses look at the \fIloadbalance\fP pl
 
 .nf
 file DBFILE [ZONES... ] {
-    transfer to ADDRESS...
     reload DURATION
 }
 
@@ -46,15 +45,13 @@ file DBFILE [ZONES... ] {
 .RE
 
 .IP \(bu 4
-\fB\fCtransfer\fR enables zone transfers. It may be specified multiples times. \fB\fCTo\fR or \fB\fCfrom\fR signals
-the direction. \fBADDRESS\fP must be denoted in CIDR notation (e.g., 127.0.0.1/32) or just as plain
-addresses. The special wildcard \fB\fC*\fR means: the entire internet (only valid for 'transfer to').
-When an address is specified a notify message will be sent whenever the zone is reloaded.
-.IP \(bu 4
 \fB\fCreload\fR interval to perform a reload of the zone if the SOA version changes. Default is one minute.
 Value of \fB\fC0\fR means to not scan for changes and reload. For example, \fB\fC30s\fR checks the zonefile every 30 seconds
 and reloads the zone when serial changes.
 
+
+.PP
+If you need outgoing zone transfers, take a look at the \fItransfer\fP plugin.
 
 .SH "EXAMPLES"
 .PP
@@ -66,9 +63,9 @@ notifies to 10.240.1.1
 
 .nf
 example.org {
-    file example.org.signed {
-        transfer to *
-        transfer to 10.240.1.1
+    file example.org.signed
+    transfer {
+        to * 10.240.1.1
     }
 }
 
@@ -83,9 +80,9 @@ Or use a single zone file for multiple zones:
 
 .nf
 \&. {
-    file example.org.signed example.org example.net {
-        transfer to *
-        transfer to 10.240.1.1
+    file example.org.signed example.org example.net
+    transfer example.org example.net {
+        to * 10.240.1.1
     }
 }
 
@@ -140,5 +137,6 @@ example.org {
 
 .SH "ALSO SEE"
 .PP
-See the \fIloadbalance\fP plugin if you need simple record shuffling.
+See the \fIloadbalance\fP plugin if you need simple record shuffling. And the \fItransfer\fP plugin for zone
+transfers. Lastly the \fIroot\fP plugin can help you specificy the location of the zone files.
 

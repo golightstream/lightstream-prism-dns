@@ -56,7 +56,6 @@ kubernetes [ZONES...] {
     endpoint\_pod\_names
     ttl TTL
     noendpoints
-    transfer to ADDRESS...
     fallthrough [ZONES...]
     ignore empty\_service
 }
@@ -126,13 +125,6 @@ the endpoint, use the dashed IP address form.
 \fB\fCnoendpoints\fR will turn off the serving of endpoint records by disabling the watch on endpoints.
 All endpoint queries and headless service queries will result in an NXDOMAIN.
 .IP \(bu 4
-\fB\fCtransfer\fR enables zone transfers. It may be specified multiples times. \fB\fCTo\fR signals the direction
-(only \fB\fCto\fR is allowed). \fBADDRESS\fP must be denoted in CIDR notation (127.0.0.1/32 etc.) or just as
-plain addresses. The special wildcard \fB\fC*\fR means: the entire internet.
-Sending DNS notifies is not supported.
-Deprecated
-\[la]https://github.com/kubernetes/dns/blob/master/docs/specification.md#26---deprecated-records\[ra] pod records in the subdomain \fB\fCpod.cluster.local\fR are not transferred.
-.IP \(bu 4
 \fB\fCfallthrough\fR \fB[ZONES...]\fP If a query for a record in the zones for which the plugin is authoritative
 results in NXDOMAIN, normally that is what the response will be. However, if you specify this option,
 the query will instead be passed on down the plugin chain, which can include another plugin to handle
@@ -144,6 +136,9 @@ queries for those zones will be subject to fallthrough.
 This allows the querying pod to continue searching for the service in the search path.
 The search path could, for example, include another Kubernetes cluster.
 
+
+.PP
+Enabling zone transfer is done by using the \fItransfer\fP plugin.
 
 .SH "READY"
 .PP
@@ -346,4 +341,9 @@ It may take one of the three values:
 .SH "BUGS"
 .PP
 The duration metric only supports the "headless_with_selector" service currently.
+
+.SH "ALSO SEE"
+.PP
+See the \fIautopath\fP plugin to enable search path optimizations. And use the \fItransfer\fP plugin to
+enable outgoing zone transfers.
 
