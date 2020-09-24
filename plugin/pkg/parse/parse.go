@@ -4,9 +4,8 @@ package parse
 import (
 	"fmt"
 
+	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/plugin/pkg/transport"
-
-	"github.com/caddyserver/caddy"
 )
 
 // Transfer parses transfer statements: 'transfer [to|from] [address...]'.
