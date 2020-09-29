@@ -88,6 +88,12 @@ func TestTrace(t *testing.T) {
 			if rootSpan.Tag(tagType) != req.Type() {
 				t.Errorf("Unexpected span tag: rootSpan.Tag(%v): want %v, got %v", tagType, req.Type(), rootSpan.Tag(tagType))
 			}
+			if rootSpan.Tag(tagProto) != req.Proto() {
+				t.Errorf("Unexpected span tag: rootSpan.Tag(%v): want %v, got %v", tagProto, req.Proto(), rootSpan.Tag(tagProto))
+			}
+			if rootSpan.Tag(tagRemote) != req.IP() {
+				t.Errorf("Unexpected span tag: rootSpan.Tag(%v): want %v, got %v", tagRemote, req.IP(), rootSpan.Tag(tagRemote))
+			}
 			if rootSpan.Tag(tagRcode) != rcode.ToString(tc.rcode) {
 				t.Errorf("Unexpected span tag: rootSpan.Tag(%v): want %v, got %v", tagRcode, rcode.ToString(tc.rcode), rootSpan.Tag(tagRcode))
 			}
