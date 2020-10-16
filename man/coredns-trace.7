@@ -50,6 +50,19 @@ trace [ENDPOINT\-TYPE] [ENDPOINT] {
 .fi
 .RE
 
+.PP
+.RS
+
+.nf
+trace datadog {
+    every AMOUNT
+    service NAME
+    datadog\_analytics\_rate RATE
+}
+
+.fi
+.RE
+
 .IP \(bu 4
 \fB\fCevery\fR \fBAMOUNT\fP will only trace one query of each AMOUNT queries. For example, to trace 1 in every
 100 queries, use AMOUNT of 100. The default is 1.
@@ -58,6 +71,10 @@ trace [ENDPOINT\-TYPE] [ENDPOINT] {
 Default is \fB\fCcoredns\fR.
 .IP \(bu 4
 \fB\fCclient_server\fR will enable the \fB\fCClientServerSameSpan\fR OpenTracing feature.
+.IP \(bu 4
+\fB\fCdatadog_analytics_rate\fR \fBRATE\fP will enable trace analytics
+\[la]https://docs.datadoghq.com/tracing/app_analytics\[ra] on the traces sent
+from \fI0\fP to \fI1\fP, \fI1\fP being every trace sent will be analyzed. This is a datadog only feature.
 
 
 .SH "ZIPKIN"
