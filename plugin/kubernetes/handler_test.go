@@ -643,8 +643,9 @@ var epsIndex = map[string][]*object.Endpoints{
 				},
 			},
 		},
-		Name:      "svc1",
+		Name:      "svc1-slice1",
 		Namespace: "testns",
+		Index:     object.EndpointsKey("svc1", "testns"),
 	}},
 	"svcempty.testns": {{
 		Subsets: []object.EndpointSubset{
@@ -655,8 +656,9 @@ var epsIndex = map[string][]*object.Endpoints{
 				},
 			},
 		},
-		Name:      "svcempty",
+		Name:      "svcempty-slice1",
 		Namespace: "testns",
+		Index:     object.EndpointsKey("svcempty", "testns"),
 	}},
 	"hdls1.testns": {{
 		Subsets: []object.EndpointSubset{
@@ -674,8 +676,9 @@ var epsIndex = map[string][]*object.Endpoints{
 				},
 			},
 		},
-		Name:      "hdls1",
+		Name:      "hdls1-slice1",
 		Namespace: "testns",
+		Index:     object.EndpointsKey("hdls1", "testns"),
 	}},
 	"hdlsprtls.testns": {{
 		Subsets: []object.EndpointSubset{
@@ -686,8 +689,9 @@ var epsIndex = map[string][]*object.Endpoints{
 				Ports: []object.EndpointPort{{Port: -1}},
 			},
 		},
-		Name:      "hdlsprtls",
+		Name:      "hdlsprtls-slice1",
 		Namespace: "testns",
+		Index:     object.EndpointsKey("hdlsprtls", "testns"),
 	}},
 }
 

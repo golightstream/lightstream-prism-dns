@@ -137,8 +137,9 @@ func (APIConnServiceTest) EpIndex(string) []*object.Endpoints {
 					},
 				},
 			},
-			Name:      "svc1",
+			Name:      "svc1-slice1",
 			Namespace: "testns",
+			Index:     object.EndpointsKey("svc1", "testns"),
 		},
 		{
 			Subsets: []object.EndpointSubset{
@@ -151,22 +152,9 @@ func (APIConnServiceTest) EpIndex(string) []*object.Endpoints {
 					},
 				},
 			},
-			Name:      "hdls1",
+			Name:      "hdls1-slice1",
 			Namespace: "testns",
-		},
-		{
-			Subsets: []object.EndpointSubset{
-				{
-					Addresses: []object.EndpointAddress{
-						{IP: "172.0.0.3"},
-					},
-					Ports: []object.EndpointPort{
-						{Port: 80, Protocol: "tcp", Name: "http"},
-					},
-				},
-			},
-			Name:      "hdls1",
-			Namespace: "testns",
+			Index:     object.EndpointsKey("hdls1", "testns"),
 		},
 		{
 			Subsets: []object.EndpointSubset{
@@ -194,8 +182,9 @@ func (APIConnServiceTest) EndpointsList() []*object.Endpoints {
 					},
 				},
 			},
-			Name:      "svc1",
+			Name:      "svc1-slice1",
 			Namespace: "testns",
+			Index:     object.EndpointsKey("svc1", "testns"),
 		},
 		{
 			Subsets: []object.EndpointSubset{
@@ -208,22 +197,24 @@ func (APIConnServiceTest) EndpointsList() []*object.Endpoints {
 					},
 				},
 			},
-			Name:      "hdls1",
+			Name:      "hdls1-slice1",
 			Namespace: "testns",
+			Index:     object.EndpointsKey("hdls1", "testns"),
 		},
 		{
 			Subsets: []object.EndpointSubset{
 				{
 					Addresses: []object.EndpointAddress{
-						{IP: "172.0.0.3"},
+						{IP: "172.0.0.2"},
 					},
 					Ports: []object.EndpointPort{
 						{Port: 80, Protocol: "tcp", Name: "http"},
 					},
 				},
 			},
-			Name:      "hdls1",
+			Name:      "hdls1-slice2",
 			Namespace: "testns",
+			Index:     object.EndpointsKey("hdls1", "testns"),
 		},
 		{
 			Subsets: []object.EndpointSubset{
@@ -275,6 +266,9 @@ func TestServices(t *testing.T) {
 
 		// External Services
 		{qname: "external.testns.svc.interwebs.test.", qtype: dns.TypeCNAME, answer: svcAns{host: "coredns.io", key: "/" + coredns + "/test/interwebs/svc/testns/external"}},
+
+		// Headless Services
+		{qname: "hdls1.testns.svc.interwebs.test.", qtype: dns.TypeA, answer: svcAns{host: "172.0.0.2", key: "/" + coredns + "/test/interwebs/svc/testns/hdls1/172-0-0-2"}},
 	}
 
 	for i, test := range tests {

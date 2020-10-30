@@ -61,43 +61,28 @@ func (APIConnTest) EpIndexReverse(ip string) []*object.Endpoints {
 	}
 	eps := []*object.Endpoints{
 		{
-			Subsets: []object.EndpointSubset{
-				{
-					Addresses: []object.EndpointAddress{
-						{
-							IP: "10.244.0.20",
-						},
-					},
-				},
-			},
-			Name:      "dns-service",
+			Name:      "dns-service-slice1",
 			Namespace: "kube-system",
+			Index:     object.EndpointsKey("dns-service", "kube-system"),
+			Subsets: []object.EndpointSubset{
+				{Addresses: []object.EndpointAddress{{IP: "10.244.0.20"}}},
+			},
 		},
 		{
-			Subsets: []object.EndpointSubset{
-				{
-					Addresses: []object.EndpointAddress{
-						{
-							IP: "10.244.0.20",
-						},
-					},
-				},
-			},
-			Name:      "hdls-dns-service",
+			Name:      "hdls-dns-service-slice1",
 			Namespace: "kube-system",
+			Index:     object.EndpointsKey("hdls-dns-service", "kube-system"),
+			Subsets: []object.EndpointSubset{
+				{Addresses: []object.EndpointAddress{{IP: "10.244.0.20"}}},
+			},
 		},
 		{
-			Subsets: []object.EndpointSubset{
-				{
-					Addresses: []object.EndpointAddress{
-						{
-							IP: "10.244.0.20",
-						},
-					},
-				},
-			},
-			Name:      "dns6-service",
+			Name:      "dns6-service-slice1",
 			Namespace: "kube-system",
+			Index:     object.EndpointsKey("dns6-service", "kube-system"),
+			Subsets: []object.EndpointSubset{
+				{Addresses: []object.EndpointAddress{{IP: "10.244.0.20"}}},
+			},
 		},
 	}
 	return eps
