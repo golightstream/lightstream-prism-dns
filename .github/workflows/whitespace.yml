@@ -17,7 +17,7 @@ jobs:
       -
         name: Remove Trailing Whitespaces
         run: |
-          find . -not -path '*/\.git/*' -type f -not -name '*.go' -exec sed -i '' 's/[[:space:]]\{1,\}$//' {} \+
+          find . -not -path '*/\.git/*' -type f -not -name '*.go' -exec sed -i 's/[[:space:]]\{1,\}$//' {} \+
       -
         name: Set up Git
         env:
