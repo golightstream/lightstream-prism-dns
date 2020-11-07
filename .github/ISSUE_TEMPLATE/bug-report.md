@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug encountered while using CoreDNS 
+about: Report a bug encountered while using CoreDNS
 labels: bug
 
 ---
