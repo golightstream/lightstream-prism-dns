@@ -113,7 +113,7 @@ func ParseStanza(c *caddy.Controller) (*Kubernetes, error) {
 
 	opts := dnsControlOpts{
 		initEndpointsCache: true,
-		useEndpointSlices: false,
+		useEndpointSlices:  false,
 		ignoreEmptyService: false,
 	}
 	k8s.opts = opts
