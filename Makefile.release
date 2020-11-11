@@ -1,21 +1,13 @@
 # Makefile for releasing CoreDNS
 #
 # The release is controlled from coremain/version.go. The version found there is
-# used to tag the git repo and to build the assets that are uploaded to github
-# (after some sanity checks).
+# used to tag the git repo and to build the assets that are uploaded to GitHub.
 #
 # The release should be accompanied by release notes in the notes/ subdirectory.
 # These are published on coredns.io. For example see: notes/coredns-1.5.1.md
+# Use make -f Makefile.release notes to create a skeleton notes document.
 #
-# Getting the authors for this release is done with the following command line
-# See the 'authors' target.
-#
-# git log --pretty=format:'%an' $(git describe --tags --abbrev=0)..master | sort -u
-#
-# Getting all pull requests merged since the last tag can be done with this "oneliner"
-# See the 'prs' target.
-#
-# % git log $(git describe --tags --abbrev=0)..HEAD --oneline | awk ' { $1="";print } ' | sed 's/^ //' | sed -e 's|#\([0-9]\)|https://github.com/coredns/coredns/pull/\1|'
+# Be sure to prune the PR list a bit, not everything is worthy!
 #
 # As seen in notes/coredns-1.5.1.md we want to style the notes in the following manner:
 #
@@ -65,10 +57,6 @@ DOCKER_IMAGE_NAME:=$(DOCKER)/$(NAME)
 LINUX_ARCH:=amd64 arm arm64 ppc64le s390x
 PLATFORMS:=$(subst $(SPACE),$(COMMA),$(foreach arch,$(LINUX_ARCH),linux/$(arch)))
 
-ifeq ($(DOCKER),)
-    $(error "Please specify Docker registry to use. Use DOCKER=coredns for releases")
-endif
-
 all:
 	@echo Use the 'release' target to build a release, 'docker' for docker build.
 
@@ -111,6 +99,9 @@ tar:
 
 .PHONY: github-push
 github-push:
+ifeq ($(GITHUB_ACCESS_TOKEN),)
+	$(error "Please set the GITHUB_ACCESS_TOKEN environment variable")
+else
 	@echo Releasing: $(VERSION)
 	@$(eval RELEASE:=$(shell curl -s -d '{"tag_name": "v$(VERSION)", "name": "v$(VERSION)"}' -H "Authorization: token ${GITHUB_ACCESS_TOKEN}" "https://api.github.com/repos/$(GITHUB)/$(NAME)/releases" | grep -m 1 '"id"' | tr -cd '[[:digit:]]'))
 	@echo ReleaseID: $(RELEASE)
@@ -133,9 +124,13 @@ github-push:
 	      --data-binary "@$$asset" \
 	      "https://uploads.github.com/repos/$(GITHUB)/$(NAME)/releases/$(RELEASE)/assets?name=$${asset}" ; \
 	done )
+endif
 
 .PHONY: docker-build
 docker-build: tar
+ifeq ($(DOCKER),)
+	$(error "Please specify Docker registry to use. Use DOCKER=coredns for releases")
+else
 	@# Steps:
 	@# 1. Copy appropriate coredns binary to build/docker/linux/<arch>
 	@# 2. Copy Dockerfile to build/docker/linux/<arch>
@@ -147,9 +142,13 @@ docker-build: tar
 	    docker build -t coredns build/docker/linux/$$arch ;\
 	    docker tag coredns $(DOCKER_IMAGE_NAME):coredns-$$arch ;\
 	done
+endif
 
 .PHONY: docker-push
 docker-push:
+ifeq ($(DOCKER),)
+	$(error "Please specify Docker registry to use. Use DOCKER=coredns for releases")
+else
 	@echo $(DOCKER_PASSWORD) | docker login -u $(DOCKER_LOGIN) --password-stdin
 	@echo Pushing: $(VERSION) to $(DOCKER_IMAGE_NAME)
 	for arch in $(LINUX_ARCH); do \
@@ -157,6 +156,7 @@ docker-push:
 	done
 	manifest-tool push from-args --platforms $(PLATFORMS) --template $(DOCKER_IMAGE_NAME):coredns-ARCH --target $(DOCKER_IMAGE_NAME):$(VERSION)
 	manifest-tool push from-args --platforms $(PLATFORMS) --template $(DOCKER_IMAGE_NAME):coredns-ARCH --target $(DOCKER_IMAGE_NAME):latest
+endif
 
 .PHONY: version
 version:
@@ -167,12 +167,23 @@ clean:
 	rm -rf release
 	rm -rf build
 
+.PHONY: notes
+notes:
+	@$(MAKE) -s -f Makefile.release authors
+	@echo
+	@$(MAKE) -s -f Makefile.release prs
+
 .PHONY: prs
 prs:
-	git log $$(git describe --tags --abbrev=0)..HEAD --oneline | awk ' { $$1="";print } ' | sed 's/^ //' | sed -e 's|#\([0-9]\)|https://github.com/coredns/coredns/pull/\1|' | \
-		grep -v '^build(deps)' | \
-		grep -v '^auto go mod tidy'
+	@echo "## Noteworthy Changes"
+	@echo
+	@git log $$(git describe --tags --abbrev=0)..HEAD --oneline | awk ' { $$1="";print } ' | sed 's/^ //' | sed -e 's|#\([0-9]\)|https://github.com/coredns/coredns/pull/\1|' | \
+	    grep -v '^build(deps)' | \
+	    grep -v '^auto go mod tidy' | grep -v '^auto remove' | grep -v '^auto make' | sed 's/^/* /'
 
 .PHONY: authors
 authors:
-	git log --pretty=format:'%an' $$(git describe --tags --abbrev=0)..master | sort -u
+	@echo "## Brought to You By"
+	@echo
+	@git log --pretty=format:'%an' $$(git describe --tags --abbrev=0)..master | sort -u | grep -v '^coredns-auto' | grep -v '^dependabot-preview' | \
+	    tac | cat -n | sed -e 's/^[[:space:]]\+1[[:space:]]\+\(.*\)/\1./' | sed -e 's/^[[:space:]]\+[[:digit:]]\+[[:space:]]\+\(.*\)/\1,/' | tac # comma separate, with dot at the end
