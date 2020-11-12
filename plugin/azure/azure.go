@@ -286,7 +286,7 @@ func updateZoneFromPrivateResourceSet(recordSet privatedns.RecordSetListResultPa
 				Refresh: uint32(*(SOA.RefreshTime)),
 				Serial:  uint32(*(SOA.SerialNumber)),
 				Mbox:    dns.Fqdn(*(SOA.Email)),
-				Ns:      *(SOA.Host)}
+				Ns:      dns.Fqdn(*(SOA.Host))}
 			newZ.Insert(soa)
 		}
 
