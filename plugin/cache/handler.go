@@ -49,11 +49,12 @@ func (c *Cache) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 		servedStale.WithLabelValues(server).Inc()
 		// Adjust the time to get a 0 TTL in the reply built from a stale item.
 		now = now.Add(time.Duration(ttl) * time.Second)
+		addr := w.LocalAddr() // See https://github.com/coredns/coredns/issues/4271, unclear how, but pull this out of the goroutine, and get the address here.
 		go func() {
 			if !do {
 				setDo(rc)
 			}
-			crr := &ResponseWriter{Cache: c, state: state, server: server, prefetch: true, remoteAddr: w.LocalAddr(), do: do}
+			crr := &ResponseWriter{Cache: c, state: state, server: server, prefetch: true, remoteAddr: addr, do: do}
 			plugin.NextOrFailure(c.Name(), c.Next, ctx, crr, rc)
 		}()
 	}
