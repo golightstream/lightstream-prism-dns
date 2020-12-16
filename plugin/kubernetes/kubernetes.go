@@ -252,7 +252,10 @@ func (k *Kubernetes) InitKubeCache(ctx context.Context) (err error) {
 	}
 	// Disable use of endpoint slices for k8s versions 1.18 and earlier. Endpoint slices were
 	// introduced in 1.17 but EndpointSliceMirroring was not added until 1.19.
-	sv, _ := kubeClient.ServerVersion()
+	sv, err := kubeClient.ServerVersion()
+	if err != nil {
+		return err
+	}
 	major, _ := strconv.Atoi(sv.Major)
 	minor, _ := strconv.Atoi(sv.Minor)
 	if k.opts.useEndpointSlices && major <= 1 && minor <= 18 {
