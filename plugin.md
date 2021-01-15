@@ -69,6 +69,15 @@ works, and implement the `ready.Readiness` interface.
 See the plugin/pkg/reuseport for `Listen` and `ListenPacket` functions. Using these functions makes
 your plugin handle reload events better.
 
+## Context
+
+Every request get a context.Context these are pre-filled with 2 values:
+
+* `Key`: holds a pointer to the current server, this can be useful for logging or metrics. It is
+  infact used in the *metrics* plugin to tie a request to a specific (internal) server.
+* `LoopKey`: holds an integer to detect loops within the current context. The *file* plugin uses
+  this to detect loops when resolving CNAMEs.
+
 ## Documentation
 
 Each plugin should have a README.md explaining what the plugin does and how it is configured. The

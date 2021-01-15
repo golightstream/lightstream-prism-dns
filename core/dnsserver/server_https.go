@@ -145,6 +145,7 @@ func (s *ServerHTTPS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// We just call the normal chain handler - all error handling is done there.
 	// We should expect a packet to be returned that we can send to the client.
 	ctx := context.WithValue(context.Background(), Key{}, s.Server)
+	ctx = context.WithValue(ctx, LoopKey{}, 0)
 	s.ServeDNS(ctx, dw, msg)
 
 	// See section 4.2.1 of RFC 8484.
