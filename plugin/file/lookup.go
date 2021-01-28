@@ -171,12 +171,7 @@ func (z *Zone) Lookup(ctx context.Context, state request.Request, qname string) 
 			return z.externalLookup(ctx, state, elem, rrs)
 		}
 
-		treeRRs := elem.Type(qtype)
-		// make a copy of the element RRs to prevent response writers from mutating the tree
-		rrs := make([]dns.RR, len(treeRRs))
-		for i, rr := range treeRRs {
-			rrs[i] = dns.Copy(rr)
-		}
+		rrs := elem.Type(qtype)
 
 		// NODATA
 		if len(rrs) == 0 {
