@@ -151,15 +151,15 @@ ftp-us-west-1.coredns.rocks. 0    IN A    10.20.20.20
 ftp-us-west-1.coredns.rocks. 0    IN A    10.30.30.30
 ```
 
-It is also possible to rewrite other values returned in the DNS response records 
-(e.g. the server names returned in `SRV` and `MX` records). This can be enabled by adding 
-the `answer value` to a name regex rule as specified below. `answer value` takes a 
-regular expression and a rewrite name as parameters and works in the same way as the 
+It is also possible to rewrite other values returned in the DNS response records
+(e.g. the server names returned in `SRV` and `MX` records). This can be enabled by adding
+the `answer value` to a name regex rule as specified below. `answer value` takes a
+regular expression and a rewrite name as parameters and works in the same way as the
 `answer name` rule.
 
 Note that names in the `AUTHORITY SECTION` and `ADDITIONAL SECTION` will also be
 rewritten following the specified rules. The names returned by the following
-record types: `CNAME`, `DNAME`, `SOA`, `SRV`, `MX`, `NAPTR`, `NS` will be rewritten 
+record types: `CNAME`, `DNAME`, `SOA`, `SRV`, `MX`, `NAPTR`, `NS` will be rewritten
 if the `answer value` rule is specified.
 
 The syntax for the rewrite of DNS request and response is as follows:
