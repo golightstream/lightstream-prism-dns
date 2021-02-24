@@ -140,7 +140,7 @@ func newNameRule(nextAction string, args ...string) (Rule, error) {
 	}
 
 	//if len(args) > 3 && len(args) != 7 {
-	if len(args) > 3 && (len(args) - 3) % 4 != 0 {
+	if len(args) > 3 && (len(args)-3)%4 != 0 {
 		return nil, fmt.Errorf("response rewrites must consist only of a name rule with 3 arguments and one or more answer rules with 3 arguments each")
 	}
 
@@ -199,7 +199,7 @@ func newNameRule(nextAction string, args ...string) (Rule, error) {
 		}
 	}
 	//if len(args) == 7 {
-	if (len(args) - 3) % 4 == 0 {
+	if (len(args)-3)%4 == 0 {
 		if matchType == RegexMatch {
 			rewriteQuestionFromPattern, err := isValidRegexPattern(rewriteQuestionFrom, rewriteQuestionTo)
 			if err != nil {
@@ -209,9 +209,9 @@ func newNameRule(nextAction string, args ...string) (Rule, error) {
 
 			responseRuleCount := (len(args) - 3) / 4
 			responseRules := make([]ResponseRule, responseRuleCount)
-			for i := 0; i < responseRuleCount; i ++ {
+			for i := 0; i < responseRuleCount; i++ {
 				startIdx := 3 + (i * 4)
-				responseRule, err := newResponseRule(args[startIdx:startIdx + 4])
+				responseRule, err := newResponseRule(args[startIdx : startIdx+4])
 				if err != nil {
 					return nil, err
 				}
@@ -231,7 +231,7 @@ func newNameRule(nextAction string, args ...string) (Rule, error) {
 }
 
 // newResponseRule creates a new "answer name" or "answer value" response rule.
-func newResponseRule(args []string) (responseRule *ResponseRule, err error){
+func newResponseRule(args []string) (responseRule *ResponseRule, err error) {
 	if args[0] != "answer" {
 		return nil, fmt.Errorf("exceeded the number of arguments for a regex name rule")
 	}
@@ -266,7 +266,9 @@ func (rule *substringNameRule) Mode() string { return rule.NextAction }
 func (rule *regexNameRule) Mode() string     { return rule.NextAction }
 
 // GetResponseRules returns rules to rewrite the response with. Currently not implemented.
-func (rule *exactNameRule) GetResponseRules() []ResponseRule { return []ResponseRule{rule.ResponseRule} }
+func (rule *exactNameRule) GetResponseRules() []ResponseRule {
+	return []ResponseRule{rule.ResponseRule}
+}
 
 // GetResponseRules returns rules to rewrite the response with. Currently not implemented.
 func (rule *prefixNameRule) GetResponseRules() []ResponseRule { return []ResponseRule{} }

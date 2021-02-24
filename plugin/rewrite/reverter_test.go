@@ -77,7 +77,7 @@ var valueTests = []struct {
 	to               string
 	toType           uint16
 	noRevert         bool
-	expectValue     string
+	expectValue      string
 	expectAnswerType uint16
 	expectAddlName   string
 }{

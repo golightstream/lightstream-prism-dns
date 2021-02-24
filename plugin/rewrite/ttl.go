@@ -13,32 +13,32 @@ import (
 )
 
 type exactTTLRule struct {
-	NextAction string
-	From       string
+	NextAction    string
+	From          string
 	ResponseRules []ResponseRule
 }
 
 type prefixTTLRule struct {
-	NextAction string
-	Prefix     string
+	NextAction    string
+	Prefix        string
 	ResponseRules []ResponseRule
 }
 
 type suffixTTLRule struct {
-	NextAction string
-	Suffix     string
+	NextAction    string
+	Suffix        string
 	ResponseRules []ResponseRule
 }
 
 type substringTTLRule struct {
-	NextAction string
-	Substring  string
+	NextAction    string
+	Substring     string
 	ResponseRules []ResponseRule
 }
 
 type regexTTLRule struct {
-	NextAction string
-	Pattern    *regexp.Regexp
+	NextAction    string
+	Pattern       *regexp.Regexp
 	ResponseRules []ResponseRule
 }
 

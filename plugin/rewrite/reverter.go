@@ -60,12 +60,12 @@ func (r *ResponseReverter) WriteMsg(res1 *dns.Msg) error {
 
 func rewriteResourceRecord(res *dns.Msg, rr dns.RR, r *ResponseReverter) {
 	var (
-		isNameRewritten   bool
-		isTTLRewritten    bool
-		isValueRewritten  bool
-		name              = rr.Header().Name
-		ttl               = rr.Header().Ttl
-		value             string
+		isNameRewritten  bool
+		isTTLRewritten   bool
+		isValueRewritten bool
+		name             = rr.Header().Name
+		ttl              = rr.Header().Ttl
+		value            string
 	)
 
 	for _, rule := range r.ResponseRules {
