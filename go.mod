@@ -1,6 +1,6 @@
 module github.com/coredns/coredns
 
-go 1.13
+go 1.16
 
 require (
 	github.com/Azure/azure-sdk-for-go v40.6.0+incompatible
