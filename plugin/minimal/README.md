@@ -6,7 +6,7 @@
 
 ## Description
 
-The *minimal* plugin tries to minimize the size of the response. Depending on the response type it 
+The *minimal* plugin tries to minimize the size of the response. Depending on the response type it
 removes resource records from the AUTHORITY and ADDITIONAL sections.
 
 Specifically this plugin looks at successful responses (this excludes negative responses, i.e.
