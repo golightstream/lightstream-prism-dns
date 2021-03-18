@@ -37,7 +37,9 @@ func setup(c *caddy.Controller) error {
 					}
 					for _, addr := range addrs {
 						if ipnet, ok := addr.(*net.IPNet); ok {
-							all = append(all, ipnet.IP.String())
+							if ipnet.IP.To4() != nil || (!ipnet.IP.IsLinkLocalMulticast() && !ipnet.IP.IsLinkLocalUnicast()) {
+								all = append(all, ipnet.IP.String())
+							}
 						}
 					}
 				}
