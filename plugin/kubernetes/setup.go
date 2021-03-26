@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/core/dnsserver"
@@ -39,12 +38,16 @@ func setup(c *caddy.Controller) error {
 		return plugin.Error(pluginName, err)
 	}
 
-	err = k.InitKubeCache(context.Background())
+	onStart, onShut, err := k.InitKubeCache(context.Background())
 	if err != nil {
 		return plugin.Error(pluginName, err)
 	}
-
-	k.RegisterKubeCache(c)
+	if onStart != nil {
+		c.OnStartup(onStart)
+	}
+	if onShut != nil {
+		c.OnShutdown(onShut)
+	}
 
 	dnsserver.GetConfig(c).AddPlugin(func(next plugin.Handler) plugin.Handler {
 		k.Next = next
@@ -58,30 +61,6 @@ func setup(c *caddy.Controller) error {
 	})
 
 	return nil
-}
-
-// RegisterKubeCache registers KubeCache start and stop functions with Caddy
-func (k *Kubernetes) RegisterKubeCache(c *caddy.Controller) {
-	c.OnStartup(func() error {
-		go k.APIConn.Run()
-
-		timeout := time.After(5 * time.Second)
-		ticker := time.NewTicker(100 * time.Millisecond)
-		for {
-			select {
-			case <-ticker.C:
-				if k.APIConn.HasSynced() {
-					return nil
-				}
-			case <-timeout:
-				return nil
-			}
-		}
-	})
-
-	c.OnShutdown(func() error {
-		return k.APIConn.Stop()
-	})
 }
 
 func kubernetesParse(c *caddy.Controller) (*Kubernetes, error) {
@@ -113,7 +92,6 @@ func ParseStanza(c *caddy.Controller) (*Kubernetes, error) {
 
 	opts := dnsControlOpts{
 		initEndpointsCache: true,
-		useEndpointSlices:  false,
 		ignoreEmptyService: false,
 	}
 	k8s.opts = opts
