@@ -24,6 +24,17 @@ func setup(c *caddy.Controller) error {
 	}
 
 	ca := cache.New(capacity)
+	stop := make(chan struct{})
+
+	c.OnShutdown(func() error {
+		close(stop)
+		return nil
+	})
+	c.OnStartup(func() error {
+		go periodicClean(ca, stop)
+		return nil
+	})
+
 	dnsserver.GetConfig(c).AddPlugin(func(next plugin.Handler) plugin.Handler {
 		return New(zones, keys, splitkeys, next, ca)
 	})

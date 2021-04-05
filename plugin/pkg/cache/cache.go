@@ -72,6 +72,13 @@ func (c *Cache) Len() int {
 	return l
 }
 
+// Walk walks each shard in the cache.
+func (c *Cache) Walk(f func(map[uint64]interface{}, uint64) bool) {
+	for _, s := range c.shards {
+		s.Walk(f)
+	}
+}
+
 // newShard returns a new shard with size.
 func newShard(size int) *shard { return &shard{items: make(map[uint64]interface{}), size: size} }
 
@@ -125,6 +132,26 @@ func (s *shard) Len() int {
 	l := len(s.items)
 	s.RUnlock()
 	return l
+}
+
+// Walk walks the shard for each element the function f is executed while holding a write lock.
+func (s *shard) Walk(f func(map[uint64]interface{}, uint64) bool) {
+	items := make([]uint64, len(s.items))
+	s.RLock()
+	i := 0
+	for k := range s.items {
+		items[i] = k
+		i++
+	}
+	s.RUnlock()
+	for _, k := range items {
+		s.Lock()
+		ok := f(s.items, k)
+		s.Unlock()
+		if !ok {
+			return
+		}
+	}
 }
 
 const shardSize = 256
