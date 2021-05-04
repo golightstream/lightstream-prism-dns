@@ -3,6 +3,7 @@ package rewrite
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -16,6 +17,11 @@ import (
 )
 
 func msgPrinter(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
+	if len(r.Answer) == 0 {
+		r.Answer = []dns.RR{
+			test.A(fmt.Sprintf("%s  5   IN  A  10.0.0.1", r.Question[0].Name)),
+		}
+	}
 	w.WriteMsg(r)
 	return 0, nil
 }
@@ -44,7 +50,7 @@ func TestNewRule(t *testing.T) {
 		{[]string{"name", "regex", "(cdns)\\.(core)\\.(rocks)", "{2}.{1}.{3}", "answer", "ttl", "(core)\\.(cdns)\\.(rocks)", "{2}.{1}.{3}"}, true, nil},
 		{[]string{"name", "regex", "(ddns)\\.(core)\\.(rocks)", "{2}.{1}.{3}", "answer", "name", "\xecore\\.(ddns)\\.(rocks)", "{2}.{1}.{3}"}, true, nil},
 		{[]string{"name", "regex", "\xedns\\.(core)\\.(rocks)", "{2}.{1}.{3}", "answer", "name", "(core)\\.(edns)\\.(rocks)", "{2}.{1}.{3}"}, true, nil},
-		{[]string{"name", "substring", "fcore.dns.rocks", "dns.fcore.rocks", "answer", "name", "(fcore)\\.(dns)\\.(rocks)", "{2}.{1}.{3}"}, true, nil},
+		{[]string{"name", "substring", "fcore.dns.rocks", "dns.fcore.rocks", "answer", "name", "(fcore)\\.(dns)\\.(rocks)", "{2}.{1}.{3}"}, false, reflect.TypeOf(&substringNameRule{})},
 		{[]string{"name", "substring", "a.com", "b.com", "c.com"}, true, nil},
 		{[]string{"type"}, true, nil},
 		{[]string{"type", "a"}, true, nil},
@@ -185,9 +191,9 @@ func TestRewrite(t *testing.T) {
 	rules = append(rules, r)
 
 	rw := Rewrite{
-		Next:     plugin.HandlerFunc(msgPrinter),
-		Rules:    rules,
-		noRevert: true,
+		Next:         plugin.HandlerFunc(msgPrinter),
+		Rules:        rules,
+		RevertPolicy: NoRevertPolicy(),
 	}
 
 	tests := []struct {
@@ -248,8 +254,8 @@ func TestRewrite(t *testing.T) {
 
 func TestRewriteEDNS0Local(t *testing.T) {
 	rw := Rewrite{
-		Next:     plugin.HandlerFunc(msgPrinter),
-		noRevert: true,
+		Next:         plugin.HandlerFunc(msgPrinter),
+		RevertPolicy: NoRevertPolicy(),
 	}
 
 	tests := []struct {
@@ -336,9 +342,9 @@ func TestEdns0LocalMultiRule(t *testing.T) {
 	rules = append(rules, r)
 
 	rw := Rewrite{
-		Next:     plugin.HandlerFunc(msgPrinter),
-		Rules:    rules,
-		noRevert: true,
+		Next:         plugin.HandlerFunc(msgPrinter),
+		Rules:        rules,
+		RevertPolicy: NoRevertPolicy(),
 	}
 
 	tests := []struct {
@@ -447,8 +453,8 @@ func (tp testProvider) Metadata(ctx context.Context, state request.Request) cont
 
 func TestRewriteEDNS0LocalVariable(t *testing.T) {
 	rw := Rewrite{
-		Next:     plugin.HandlerFunc(msgPrinter),
-		noRevert: true,
+		Next:         plugin.HandlerFunc(msgPrinter),
+		RevertPolicy: NoRevertPolicy(),
 	}
 
 	expectedMetadata := []metadata.Provider{
@@ -569,8 +575,8 @@ func TestRewriteEDNS0LocalVariable(t *testing.T) {
 
 func TestRewriteEDNS0Subnet(t *testing.T) {
 	rw := Rewrite{
-		Next:     plugin.HandlerFunc(msgPrinter),
-		noRevert: true,
+		Next:         plugin.HandlerFunc(msgPrinter),
+		RevertPolicy: NoRevertPolicy(),
 	}
 
 	tests := []struct {

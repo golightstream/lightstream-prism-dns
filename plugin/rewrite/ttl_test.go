@@ -121,9 +121,8 @@ func doTTLTests(rules []Rule, t *testing.T) {
 		m.Question[0].Qclass = dns.ClassINET
 		m.Answer = tc.answer
 		rw := Rewrite{
-			Next:     plugin.HandlerFunc(msgPrinter),
-			Rules:    rules,
-			noRevert: false,
+			Next:  plugin.HandlerFunc(msgPrinter),
+			Rules: rules,
 		}
 		rec := dnstest.NewRecorder(&test.ResponseWriter{})
 		rw.ServeDNS(ctx, rec, m)

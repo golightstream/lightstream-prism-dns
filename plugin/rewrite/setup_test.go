@@ -44,12 +44,12 @@ func TestParse(t *testing.T) {
 		`rewrite stop {
     name regex foo bar
     answer name bar foo
-    name baz qux
+    name baz
 }`)
 	_, err = rewriteParse(c)
 	if err == nil {
 		t.Errorf("Expected error but got success for invalid response rewrite")
-	} else if !strings.Contains(err.Error(), "must consist only of") {
+	} else if !strings.Contains(err.Error(), "2 arguments required") {
 		t.Errorf("Got wrong error for invalid response rewrite: %v", err.Error())
 	}
 
