@@ -16,8 +16,8 @@ import (
 	"github.com/coredns/coredns/request"
 
 	"github.com/miekg/dns"
-	etcdcv3 "go.etcd.io/etcd/clientv3"
-	"go.etcd.io/etcd/mvcc/mvccpb"
+	"go.etcd.io/etcd/api/v3/mvccpb"
+	etcdcv3 "go.etcd.io/etcd/client/v3"
 )
 
 const (

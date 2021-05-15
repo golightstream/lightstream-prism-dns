@@ -9,7 +9,7 @@ import (
 	mwtls "github.com/coredns/coredns/plugin/pkg/tls"
 	"github.com/coredns/coredns/plugin/pkg/upstream"
 
-	etcdcv3 "go.etcd.io/etcd/clientv3"
+	etcdcv3 "go.etcd.io/etcd/client/v3"
 )
 
 func init() { plugin.Register("etcd", setup) }
