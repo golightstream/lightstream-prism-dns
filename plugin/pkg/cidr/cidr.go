@@ -17,7 +17,7 @@ import (
 func Split(n *net.IPNet) []string {
 	boundary := 8
 	nstr := n.String()
-	if strings.Contains(nstr,":") {
+	if strings.Contains(nstr, ":") {
 		boundary = 4
 	}
 	ones, _ := n.Mask.Size()
