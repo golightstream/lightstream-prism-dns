@@ -1,13 +1,18 @@
 package secondary
 
 import (
+	"time"
+
 	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
 	"github.com/coredns/coredns/plugin/file"
+	clog "github.com/coredns/coredns/plugin/pkg/log"
 	"github.com/coredns/coredns/plugin/pkg/parse"
 	"github.com/coredns/coredns/plugin/pkg/upstream"
 )
+
+var log = clog.NewWithPlugin("secondary")
 
 func init() { plugin.Register("secondary", setup) }
 
@@ -24,7 +29,21 @@ func setup(c *caddy.Controller) error {
 			c.OnStartup(func() error {
 				z.StartupOnce.Do(func() {
 					go func() {
-						z.TransferIn()
+						dur := time.Millisecond * 250
+						step := time.Duration(2)
+						max := time.Second * 10
+						for {
+							err := z.TransferIn()
+							if err == nil {
+								break
+							}
+							log.Warningf("All '%s' masters failed to transfer, retrying in %s: %s", n, dur.String(), err)
+							time.Sleep(dur)
+							dur = step * dur
+							if dur > max {
+								dur = max
+							}
+						}
 						z.Update()
 					}()
 				})
