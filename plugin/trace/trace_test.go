@@ -45,7 +45,7 @@ func TestTrace(t *testing.T) {
 		rcode    int
 		question *dns.Msg
 		server   string
-		err    error
+		err      error
 	}{
 		{
 			name:     "NXDOMAIN",
