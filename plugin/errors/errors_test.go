@@ -188,8 +188,8 @@ func TestStop(t *testing.T) {
 
 	h := &errorHandler{
 		patterns: []*pattern{{
-			period:  2 * time.Second,
-			pattern: regexp.MustCompile("^error.*!$"),
+			period:      2 * time.Second,
+			pattern:     regexp.MustCompile("^error.*!$"),
 			logCallback: log.Errorf,
 		}},
 	}
