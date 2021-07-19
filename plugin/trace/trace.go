@@ -30,7 +30,7 @@ import (
 
 const (
 	defaultTopLevelSpanName = "servedns"
-    metaTraceIdKey = "trace/traceid"
+	metaTraceIdKey          = "trace/traceid"
 )
 
 type traceTags struct {
@@ -146,9 +146,9 @@ func (t *trace) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 
 	switch spanCtx := span.Context().(type) {
 	case zipkinot.SpanContext:
-		metadata.SetValueFunc(ctx, metaTraceIdKey, func() string{ return spanCtx.TraceID.String() })
+		metadata.SetValueFunc(ctx, metaTraceIdKey, func() string { return spanCtx.TraceID.String() })
 	case ddtrace.SpanContext:
-		metadata.SetValueFunc(ctx, metaTraceIdKey, func() string{ return fmt.Sprint(spanCtx.TraceID()) })
+		metadata.SetValueFunc(ctx, metaTraceIdKey, func() string { return fmt.Sprint(spanCtx.TraceID()) })
 	}
 
 	rw := dnstest.NewRecorder(w)
