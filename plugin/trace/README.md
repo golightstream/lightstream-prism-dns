@@ -98,7 +98,7 @@ trace tracinghost:9411 {
 The trace plugin will publish the following metadata, if the *metadata*
 plugin is also enabled:
 
-* `trace/traceid`: identifier of (zipkin/datadog) trace of processed request 
+* `trace/traceid`: identifier of (zipkin/datadog) trace of processed request
 
 ## See Also
 

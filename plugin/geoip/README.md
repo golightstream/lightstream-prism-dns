@@ -25,7 +25,7 @@ if getLongitude := metadata.ValueFunc(ctx, "geoip/longitude"); getLongitude != n
 ```
 
 ## Databases
-The supported databases use city schema such as `City` and `Enterprise`. Other databases types with different schemas are not supported yet. 
+The supported databases use city schema such as `City` and `Enterprise`. Other databases types with different schemas are not supported yet.
 
 You can download a [free and public City database](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data).
 
