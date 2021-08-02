@@ -11,8 +11,8 @@ import (
 // Namespace is a stripped down api.Namespace with only the items we need for CoreDNS.
 type Namespace struct {
 	// Don't add new fields to this struct without talking to the CoreDNS maintainers.
-	Version   string
-	Name      string
+	Version string
+	Name    string
 
 	*Empty
 }
