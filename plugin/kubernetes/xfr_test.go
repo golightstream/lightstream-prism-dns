@@ -5,8 +5,25 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/coredns/coredns/plugin/transfer"
+
 	"github.com/miekg/dns"
 )
+
+func TestKubernetesTransferNonAuthZone(t *testing.T) {
+	k := New([]string{"cluster.local."})
+	k.APIConn = &APIConnServeTest{}
+	k.Namespaces = map[string]struct{}{"testns": {}, "kube-system": {}}
+	k.localIPs = []net.IP{net.ParseIP("10.0.0.10")}
+
+	dnsmsg := &dns.Msg{}
+	dnsmsg.SetAxfr("example.com")
+
+	_, err := k.Transfer("example.com", 0)
+	if err != transfer.ErrNotAuthoritative {
+		t.Error(err)
+	}
+}
 
 func TestKubernetesAXFR(t *testing.T) {
 	k := New([]string{"cluster.local."})
