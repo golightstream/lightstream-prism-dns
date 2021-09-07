@@ -115,8 +115,21 @@ func (z *Zone) Lookup(ctx context.Context, state request.Request, qname string) 
 			// Only one DNAME is allowed per name. We just pick the first one to synthesize from.
 			dname := dnamerrs[0]
 			if cname := synthesizeCNAME(state.Name(), dname.(*dns.DNAME)); cname != nil {
-				ctx = context.WithValue(ctx, dnsserver.LoopKey{}, loop+1)
-				answer, ns, extra, rcode := z.externalLookup(ctx, state, elem, []dns.RR{cname})
+				var (
+					answer, ns, extra []dns.RR
+					rcode             Result
+				)
+
+				// We don't need to chase CNAME chain for synthesized CNAME
+				if qtype == dns.TypeCNAME {
+					answer = []dns.RR{cname}
+					ns = ap.ns(do)
+					extra = nil
+					rcode = Success
+				} else {
+					ctx = context.WithValue(ctx, dnsserver.LoopKey{}, loop+1)
+					answer, ns, extra, rcode = z.externalLookup(ctx, state, elem, []dns.RR{cname})
+				}
 
 				if do {
 					sigs := elem.Type(dns.TypeRRSIG)
@@ -203,7 +216,7 @@ func (z *Zone) Lookup(ctx context.Context, state request.Request, qname string) 
 	if wildElem != nil {
 		auth := ap.ns(do)
 
-		if rrs := wildElem.TypeForWildcard(dns.TypeCNAME, qname); len(rrs) > 0 {
+		if rrs := wildElem.TypeForWildcard(dns.TypeCNAME, qname); len(rrs) > 0 && qtype != dns.TypeCNAME {
 			ctx = context.WithValue(ctx, dnsserver.LoopKey{}, loop+1)
 			return z.externalLookup(ctx, state, wildElem, rrs)
 		}
