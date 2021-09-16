@@ -78,5 +78,8 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Test Makefile
-      run:  make GITHUB_ACCESS_TOKEN=bla -n build github-push -f Makefile.release
+    - name: Test Makefile.release
+      run:  make GITHUB_ACCESS_TOKEN=x -n release github-push -f Makefile.release
+
+    - name: Test Makefile.docker
+      run:  make VERSION=x DOCKER=x -n release docker-push -f Makefile.docker
