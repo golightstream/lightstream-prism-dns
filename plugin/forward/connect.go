@@ -100,7 +100,7 @@ func (p *Proxy) Connect(ctx context.Context, state request.Request, opts options
 	// records the origin Id before upstream.
 	originId := state.Req.Id
 	state.Req.Id = dns.Id()
-	defer func(){
+	defer func() {
 		state.Req.Id = originId
 	}()
 
@@ -122,7 +122,7 @@ func (p *Proxy) Connect(ctx context.Context, state request.Request, opts options
 				return nil, ErrCachedClosed
 			}
 			// recovery the origin Id after upstream.
-			if ret != nil{
+			if ret != nil {
 				ret.Id = originId
 			}
 			return ret, err
