@@ -328,7 +328,7 @@ func errorAndMetricsFunc(server string, w dns.ResponseWriter, r *dns.Msg, rc int
 	answer.SetRcode(r, rc)
 	state.SizeAndDo(answer)
 
-	vars.Report(server, state, vars.Dropped, rcode.ToString(rc), answer.Len(), time.Now())
+	vars.Report(server, state, vars.Dropped, rcode.ToString(rc), "" /* plugin */, answer.Len(), time.Now())
 
 	w.WriteMsg(answer)
 }
