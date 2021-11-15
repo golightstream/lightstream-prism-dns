@@ -53,7 +53,7 @@ var (
 		Buckets:   plugin.SlimTimeBuckets,
 		Help:      "Histogram of the time (in seconds) each request took.",
 	})
-	// HealthFailures is the metric used to count how many times the thealth request failed
+	// HealthFailures is the metric used to count how many times the health request failed
 	HealthFailures = promauto.NewCounter(prometheus.CounterOpts{
 		Namespace: plugin.Namespace,
 		Subsystem: "health",
