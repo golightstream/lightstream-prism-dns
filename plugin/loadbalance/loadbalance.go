@@ -62,7 +62,7 @@ func roundRobinShuffle(records []dns.RR) {
 		}
 	default:
 		for j := 0; j < l; j++ {
-			p := j + (int(dns.Id()) % (l-j))
+			p := j + (int(dns.Id()) % (l - j))
 			if j == p {
 				continue
 			}
