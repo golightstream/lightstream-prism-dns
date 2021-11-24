@@ -58,7 +58,7 @@ func newGeoIP(dbPath string) (*GeoIP, error) {
 				return nil, fmt.Errorf("unexpected failure looking up database %q schema %q: %v", filepath.Base(dbPath), schema.name, err)
 			}
 		} else {
-			db.provides = db.provides | schema.provides
+			db.provides |= schema.provides
 		}
 	}
 
