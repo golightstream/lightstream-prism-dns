@@ -315,7 +315,7 @@ func (k *Kubernetes) endpointSliceSupported(kubeClient *kubernetes.Clientset) (b
 			// Disable use of endpoint slices for k8s versions 1.18 and earlier. The Endpointslices API was enabled
 			// by default in 1.17 but Service -> Pod proxy continued to use Endpoints by default until 1.19.
 			// DNS results should be built from the same source data that the proxy uses.  This decision assumes
-			// k8s EndpointSliceProxying featuregate is at the default (i.e. only enabled for k8s >= 1.19).
+			// k8s EndpointSliceProxying feature gate is at the default (i.e. only enabled for k8s >= 1.19).
 			major, _ := strconv.Atoi(sv.Major)
 			minor, _ := strconv.Atoi(strings.TrimRight(sv.Minor, "+"))
 			if major <= 1 && minor <= 18 {
@@ -413,9 +413,9 @@ func (k *Kubernetes) findPods(r recordRequest, zone string) (pods []msg.Service,
 	zonePath := msg.Path(zone, coredns)
 	ip := ""
 	if strings.Count(podname, "-") == 3 && !strings.Contains(podname, "--") {
-		ip = strings.Replace(podname, "-", ".", -1)
+		ip = strings.ReplaceAll(podname, "-", ".")
 	} else {
-		ip = strings.Replace(podname, "-", ":", -1)
+		ip = strings.ReplaceAll(podname, "-", ":")
 	}
 
 	if k.podMode == podModeInsecure {
@@ -514,7 +514,7 @@ func (k *Kubernetes) findServices(r recordRequest, zone string) (services []msg.
 			podsCount := 0
 			for _, ep := range endpointsListFunc() {
 				for _, eps := range ep.Subsets {
-					podsCount = podsCount + len(eps.Addresses)
+					podsCount += len(eps.Addresses)
 				}
 			}
 
@@ -557,7 +557,7 @@ func (k *Kubernetes) findServices(r recordRequest, zone string) (services []msg.
 						}
 
 						for _, p := range eps.Ports {
-							if !(match(r.port, p.Name) && match(r.protocol, string(p.Protocol))) {
+							if !(match(r.port, p.Name) && match(r.protocol, p.Protocol)) {
 								continue
 							}
 							s := msg.Service{Host: addr.IP, Port: int(p.Port), TTL: k.ttl}
