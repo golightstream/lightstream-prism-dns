@@ -103,6 +103,13 @@ var dnsTestCases = []test.Case{
 		Ns: miekAuth,
 	},
 	{
+		Qname: "a.b.x.miek.nl.", Qtype: dns.TypeCNAME,
+		Rcode: dns.RcodeNameError,
+		Ns: []dns.RR{
+			test.SOA("miek.nl.	1800	IN	SOA	linode.atoom.net. miek.miek.nl. 1282630057 14400 3600 604800 14400"),
+		},
+	},
+	{
 		Qname: "asterisk.y.miek.nl.", Qtype: dns.TypeA,
 		Answer: []dns.RR{
 			test.A("asterisk.y.miek.nl.     1800    IN      A       139.162.196.78"),
@@ -222,6 +229,7 @@ a               IN      A       139.162.196.78
 www             IN      CNAME   a
 archive         IN      CNAME   a
 *.x             IN      CNAME   www
+b.x             IN      CNAME   a
 *.y             IN      A       139.162.196.78
 dname           IN      DNAME   x
 
