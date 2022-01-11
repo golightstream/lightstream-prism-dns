@@ -72,9 +72,9 @@ Enable translation even if an existing AAAA record is present.
 }
 ~~~
 
-Apply translation even to the requests which arrived over IPv4 network. Warning, the `allow_ipv4` feature will apply 
+Apply translation even to the requests which arrived over IPv4 network. Warning, the `allow_ipv4` feature will apply
 translations to requests coming from dual-stack clients. This means that a request for a client that sends an `AAAA`
-that would normal result in an `NXDOMAIN` would get a translated result. 
+that would normal result in an `NXDOMAIN` would get a translated result.
 This may cause unwanted IPv6 dns64 traffic when a dualstack client would normally use the result of an `A` record request.
 
 ~~~ corefile
