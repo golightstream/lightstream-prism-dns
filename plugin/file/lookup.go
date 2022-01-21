@@ -366,7 +366,7 @@ Redo:
 		goto Redo
 	}
 
-	targets := rrutil.CNAMEForType(elem.All(), qtype)
+	targets := elem.Type(qtype)
 	if len(targets) > 0 {
 		rrs = append(rrs, targets...)
 
