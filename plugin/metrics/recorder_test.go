@@ -4,11 +4,11 @@ import (
 	"testing"
 
 	"github.com/coredns/coredns/plugin/test"
-	
+
 	"github.com/miekg/dns"
 )
 
-type inmemoryWriter struct{
+type inmemoryWriter struct {
 	test.ResponseWriter
 	written []byte
 }
@@ -33,16 +33,16 @@ func TestRecorder_WriteMsg(t *testing.T) {
 	nxdomainResp.Rcode = dns.RcodeNameError
 
 	tests := []struct {
-		name      string
-		msg *dns.Msg
+		name string
+		msg  *dns.Msg
 	}{
 		{
 			name: "should record successful response",
-			msg: &successResp,
+			msg:  &successResp,
 		},
 		{
 			name: "should record nxdomain response",
-			msg: &nxdomainResp,
+			msg:  &nxdomainResp,
 		},
 	}
 	for i, tt := range tests {
