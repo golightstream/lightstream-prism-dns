@@ -381,11 +381,11 @@ func TestServeDNS(t *testing.T) {
 
 		// Before sorting, make sure that CNAMES do not appear after their target records
 		if err := test.CNAMEOrder(resp); err != nil {
-			t.Errorf("Test %d, %v",i, err)
+			t.Errorf("Test %d, %v", i, err)
 		}
 
 		if err := test.SortAndCheck(resp, tc); err != nil {
-			t.Errorf("Test %d, %v",i, err)
+			t.Errorf("Test %d, %v", i, err)
 		}
 	}
 }
