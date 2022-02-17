@@ -47,6 +47,21 @@ ifeq ($(VERSION),)
 	$(error "Please specify a version use. Use VERSION=<version>")
 endif
 
+	@# 0. Check until all asset are alive, up to 10 min (asset may not be alive immediately after upload)
+	try_max=20; try_sleep=30; \
+	for arch in $(LINUX_ARCH); do \
+		asset=coredns_$(VERSION)_linux_$${arch}.tgz; \
+		for i in $$(seq 1 $$try_max ); do \
+			if [ $$(curl -I -L -s -o /dev/null -w "%{http_code}" $(GITHUB)/v$(VERSION)/$$asset) -eq 200 ]; then \
+				echo "$$asset is live" ; break; \
+			else  \
+				echo "$$asset is not live yet..." ; sleep $$try_sleep ; \
+			fi ; \
+		done ; \
+		if [ $$i -eq $$try_max ]; then \
+			echo "$$asset is not live after $$try_max tries" ; exit 1; \
+		fi ; \
+	done
 	@rm -rf build/docker
 	@mkdir -p build/docker
 	@# 1. Copy appropriate coredns binary to build/docker/<arch>
