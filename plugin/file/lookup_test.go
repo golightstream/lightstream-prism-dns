@@ -132,6 +132,13 @@ var dnsTestCases = []test.Case{
 		Rcode: dns.RcodeServerFailure,
 		Ns:    miekAuth,
 	},
+	{
+		Qname: "txt.miek.nl.", Qtype: dns.TypeTXT,
+		Answer: []dns.RR{
+			test.TXT(`txt.miek.nl.  1800	IN	TXT "v=spf1 a mx ~all"`),
+		},
+		Ns: miekAuth,
+	},
 }
 
 const (
@@ -236,4 +243,5 @@ dname           IN      DNAME   x
 srv		IN	SRV     10 10 8080 a.miek.nl.
 mx		IN	MX      10 a.miek.nl.
 
+txt     IN	TXT     "v=spf1 a mx ~all"
 ext-cname   IN   CNAME  example.com.`
