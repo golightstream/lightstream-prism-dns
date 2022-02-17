@@ -1,0 +1,23 @@
+name: Reviewdog
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  gofmt:
+    name: Go Fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: find . -not -path '*/\.git/*' -type f -name '*.go' -exec gofmt -s -w {} \+
+      - uses: reviewdog/action-suggester@v1
+
+  whitespace:
+    name: Whitespace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: find . -not -path '*/\.git/*' -type f -not -name '*.go' -exec sed -i 's/[[:space:]]\{1,\}$//' {} \+
+      - uses: reviewdog/action-suggester@v1
