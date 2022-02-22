@@ -272,6 +272,7 @@ func (k *Kubernetes) InitKubeCache(ctx context.Context) (onStart func() error, o
 		}()
 
 		timeout := time.After(5 * time.Second)
+		logWaiting := time.After(500 * time.Millisecond)
 		ticker := time.NewTicker(100 * time.Millisecond)
 		defer ticker.Stop()
 		for {
@@ -280,6 +281,8 @@ func (k *Kubernetes) InitKubeCache(ctx context.Context) (onStart func() error, o
 				if k.APIConn.HasSynced() {
 					return nil
 				}
+			case <-logWaiting:
+				log.Info("waiting for Kubernetes API before starting server")
 			case <-timeout:
 				log.Warning("starting server with unsynced Kubernetes API")
 				return nil
@@ -304,11 +307,20 @@ func (k *Kubernetes) InitKubeCache(ctx context.Context) (onStart func() error, o
 func (k *Kubernetes) endpointSliceSupported(kubeClient *kubernetes.Clientset) (bool, string) {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
+	logTicker := time.NewTicker(10 * time.Second)
+	defer logTicker.Stop()
+	var connErr error
 	for {
 		select {
+		case <-logTicker.C:
+			if connErr == nil {
+				continue
+			}
+			log.Warningf("Kubernetes API connection failure: %v", connErr)
 		case <-ticker.C:
 			sv, err := kubeClient.ServerVersion()
 			if err != nil {
+				connErr = err
 				continue
 			}
 
@@ -328,6 +340,7 @@ func (k *Kubernetes) endpointSliceSupported(kubeClient *kubernetes.Clientset) (b
 			if err == nil {
 				return true, discovery.SchemeGroupVersion.String()
 			} else if !kerrors.IsNotFound(err) {
+				connErr = err
 				continue
 			}
 
@@ -335,6 +348,7 @@ func (k *Kubernetes) endpointSliceSupported(kubeClient *kubernetes.Clientset) (b
 			if err == nil {
 				return true, discoveryV1beta1.SchemeGroupVersion.String()
 			} else if !kerrors.IsNotFound(err) {
+				connErr = err
 				continue
 			}
 
