@@ -39,7 +39,7 @@ Extra labels used are:
   * 200 - request is processed,
   * 404 - request has been rejected on validation,
   * 400 - request to dns message conversion failed,
-  * 500 - processing ended up with no response. 
+  * 500 - processing ended up with no response.
 * the `plugin` label holds the name of the plugin that made the write to the client. If the server
   did the write (on error for instance), the value is empty.
 
