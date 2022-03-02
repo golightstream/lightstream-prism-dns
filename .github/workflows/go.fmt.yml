@@ -4,9 +4,13 @@ on:
   schedule:
     - cron: '22 10 * * 1'
 
+permissions: read-all
+
 jobs:
   fix:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
