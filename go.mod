@@ -25,8 +25,8 @@ require (
 	go.etcd.io/etcd/api/v3 v3.5.2
 	go.etcd.io/etcd/client/v3 v3.5.2
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
-	golang.org/x/sys v0.0.0-20220325203850-36772127a21f
-	google.golang.org/api v0.73.0
+	golang.org/x/sys v0.0.0-20220328115105-d36c6a25d886
+	google.golang.org/api v0.74.0
 	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.28.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.37.0
@@ -69,7 +69,7 @@ require (
 	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
+	github.com/googleapis/gax-go/v2 v2.2.0 // indirect
 	github.com/googleapis/gnostic v0.5.5 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -92,7 +92,7 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
+	golang.org/x/net v0.0.0-20220325170049-de3da57026de // indirect
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
@@ -100,7 +100,7 @@ require (
 	golang.org/x/tools v0.1.6-0.20210726203631-07bc1bf47fb2 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20220310185008-1973136f34c6 // indirect
+	google.golang.org/genproto v0.0.0-20220324131243-acbaeb5b85eb // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
