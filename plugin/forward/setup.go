@@ -151,6 +151,7 @@ func parseStanza(c *caddy.Controller) (*Forward, error) {
 		if f.opts.forceTCP && transports[i] != transport.TLS {
 			f.proxies[i].health.SetTCPTransport()
 		}
+		f.proxies[i].health.SetDomain(f.opts.hcDomain)
 	}
 
 	return f, nil
@@ -187,11 +188,17 @@ func parseBlock(c *caddy.Controller, f *Forward) error {
 			return fmt.Errorf("health_check can't be negative: %d", dur)
 		}
 		f.hcInterval = dur
+		f.opts.hcDomain = "."
 
 		for c.NextArg() {
 			switch hcOpts := c.Val(); hcOpts {
 			case "no_rec":
 				f.opts.hcRecursionDesired = false
+			case "domain":
+				if !c.NextArg() {
+					return c.ArgErr()
+				}
+				f.opts.hcDomain = c.Val()
 			default:
 				return fmt.Errorf("health_check: unknown option %s", hcOpts)
 			}
