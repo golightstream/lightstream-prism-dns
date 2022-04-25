@@ -7,6 +7,7 @@ import (
 
 	"github.com/coredns/coredns/plugin/pkg/dnstest"
 	"github.com/coredns/coredns/plugin/test"
+	"github.com/coredns/coredns/request"
 
 	"github.com/miekg/dns"
 )
@@ -188,6 +189,33 @@ func TestLookupNil(t *testing.T) {
 	fm.ServeDNS(ctx, rec, m)
 }
 
+func TestLookUpNoDataResult(t *testing.T) {
+	zone, err := Parse(strings.NewReader(dbMiekNL), testzone, "stdin", 0)
+	if err != nil {
+		t.Fatalf("Expected no error when reading zone, got %q", err)
+	}
+
+	fm := File{Next: test.ErrorHandler(), Zones: Zones{Z: map[string]*Zone{testzone: zone}, Names: []string{testzone}}}
+	ctx := context.TODO()
+	var noDataTestCases = []test.Case{
+		{
+			Qname: "a.miek.nl.", Qtype: dns.TypeMX,
+		},
+		{
+			Qname: "wildcard.nodata.miek.nl.", Qtype: dns.TypeMX,
+		},
+	}
+
+	for _, tc := range noDataTestCases {
+		m := tc.Msg()
+		state := request.Request{W: &test.ResponseWriter{}, Req: m}
+		_, _, _, result := fm.Z[testzone].Lookup(ctx, state, tc.Qname)
+		if result != NoData {
+			t.Errorf("Expected result == 3 but result == %v ", result)
+		}
+	}
+}
+
 func BenchmarkFileLookup(b *testing.B) {
 	zone, err := Parse(strings.NewReader(dbMiekNL), testzone, "stdin", 0)
 	if err != nil {
@@ -252,4 +280,5 @@ mx		IN	MX      10 a.miek.nl.
 
 txt     IN	TXT     "v=spf1 a mx ~all"
 caa     IN  CAA    0 issue letsencrypt.org
+*.nodata    IN   A      139.162.196.79
 ext-cname   IN   CNAME  example.com.`

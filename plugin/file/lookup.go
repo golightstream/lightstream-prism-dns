@@ -230,7 +230,7 @@ func (z *Zone) Lookup(ctx context.Context, state request.Request, qname string) 
 				nsec := typeFromElem(wildElem, dns.TypeNSEC, do)
 				ret = append(ret, nsec...)
 			}
-			return nil, ret, nil, Success
+			return nil, ret, nil, NoData
 		}
 
 		if do {
