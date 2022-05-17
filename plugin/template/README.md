@@ -24,7 +24,7 @@ template CLASS TYPE [ZONE...] {
 * **CLASS** the query class (usually IN or ANY).
 * **TYPE** the query type (A, PTR, ... can be ANY to match all types).
 * **ZONE** the zone scope(s) for this template. Defaults to the server zones.
-* `match` **REGEX** [Go regexp](https://golang.org/pkg/regexp/) that are matched against the incoming question name. 
+* `match` **REGEX** [Go regexp](https://golang.org/pkg/regexp/) that are matched against the incoming question name.
   Specifying no regex matches everything (default: `.*`). First matching regex wins.
 * `answer|additional|authority` **RR** A [RFC 1035](https://tools.ietf.org/html/rfc1035#section-5) style resource record fragment
   built by a [Go template](https://golang.org/pkg/text/template/) that contains the reply. Specifying no answer will result
