@@ -13,10 +13,10 @@ import (
 
 func TestErrorsParse(t *testing.T) {
 	tests := []struct {
-		inputErrorsRules        string
-		shouldErr               bool
-		optCount                int
-		stacktrace bool
+		inputErrorsRules string
+		shouldErr        bool
+		optCount         int
+		stacktrace       bool
 	}{
 		{`errors`, false, 0, false},
 		{`errors stdout`, false, 0, false},
