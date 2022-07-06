@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/coredns/coredns/plugin/etcd/msg"
+	"github.com/coredns/coredns/plugin/pkg/dnsutil"
 	"github.com/coredns/coredns/request"
 
 	"github.com/miekg/dns"
@@ -74,6 +75,19 @@ func (e *External) aaaa(ctx context.Context, services []msg.Service, state reque
 		}
 	}
 	return records, truncated
+}
+
+func (e *External) ptr(services []msg.Service, state request.Request) (records []dns.RR) {
+	dup := make(map[string]struct{})
+	for _, s := range services {
+		if _, ok := dup[s.Host]; !ok {
+			dup[s.Host] = struct{}{}
+			rr := s.NewPTR(state.QName(), dnsutil.Join(s.Host, e.Zones[0]))
+			rr.Hdr.Ttl = e.ttl
+			records = append(records, rr)
+		}
+	}
+	return records
 }
 
 func (e *External) srv(ctx context.Context, services []msg.Service, state request.Request) (records, extra []dns.RR) {
