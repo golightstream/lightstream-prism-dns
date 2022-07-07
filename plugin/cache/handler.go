@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/coredns/coredns/plugin"
+	"github.com/coredns/coredns/plugin/metadata"
 	"github.com/coredns/coredns/plugin/metrics"
 	"github.com/coredns/coredns/request"
 
@@ -37,7 +38,7 @@ func (c *Cache) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 	ttl := 0
 	i := c.getIgnoreTTL(now, state, server)
 	if i == nil {
-		crr := &ResponseWriter{ResponseWriter: w, Cache: c, state: state, server: server, do: do, ad: ad}
+		crr := &ResponseWriter{ResponseWriter: w, Cache: c, state: state, server: server, do: do,  ad: ad, wildcardFunc: wildcardFunc(ctx)}
 		return c.doRefresh(ctx, state, crr)
 	}
 	ttl = i.ttl(now)
@@ -63,10 +64,27 @@ func (c *Cache) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) 
 		cw := newPrefetchResponseWriter(server, state, c)
 		go c.doPrefetch(ctx, state, cw, i, now)
 	}
+
+	if i.wildcard != "" {
+		// Set wildcard source record name to metadata
+		metadata.SetValueFunc(ctx, "zone/wildcard", func() string {
+			return i.wildcard
+		})
+	}
+
 	resp := i.toMsg(r, now, do, ad)
 	w.WriteMsg(resp)
-
 	return dns.RcodeSuccess, nil
+}
+
+func wildcardFunc(ctx context.Context) func() string {
+	return func() string {
+		// Get wildcard source record name from metadata
+		if f := metadata.ValueFunc(ctx, "zone/wildcard"); f != nil {
+			return f()
+		}
+		return ""
+	}
 }
 
 func (c *Cache) doPrefetch(ctx context.Context, state request.Request, cw *ResponseWriter, i *item, now time.Time) {

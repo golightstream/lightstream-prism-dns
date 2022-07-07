@@ -114,6 +114,9 @@ type ResponseWriter struct {
 	ad         bool // When true the original request had the AD bit set.
 	prefetch   bool // When true write nothing back to the client.
 	remoteAddr net.Addr
+
+	wildcardFunc func() string // function to retrieve wildcard name that synthesized the result.
+
 }
 
 // newPrefetchResponseWriter returns a Cache ResponseWriter to be used in
@@ -202,6 +205,9 @@ func (w *ResponseWriter) set(m *dns.Msg, key uint64, mt response.Type, duration 
 	switch mt {
 	case response.NoError, response.Delegation:
 		i := newItem(m, w.now(), duration)
+		if w.wildcardFunc != nil {
+			i.wildcard = w.wildcardFunc()
+		}
 		if w.pcache.Add(key, i) {
 			evictions.WithLabelValues(w.server, Success, w.zonesMetricLabel).Inc()
 		}
@@ -212,6 +218,9 @@ func (w *ResponseWriter) set(m *dns.Msg, key uint64, mt response.Type, duration 
 
 	case response.NameError, response.NoData, response.ServerError:
 		i := newItem(m, w.now(), duration)
+		if w.wildcardFunc != nil {
+			i.wildcard = w.wildcardFunc()
+		}
 		if w.ncache.Add(key, i) {
 			evictions.WithLabelValues(w.server, Denial, w.zonesMetricLabel).Inc()
 		}
