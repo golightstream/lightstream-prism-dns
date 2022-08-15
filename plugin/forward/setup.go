@@ -14,6 +14,8 @@ import (
 	"github.com/coredns/coredns/plugin/pkg/parse"
 	pkgtls "github.com/coredns/coredns/plugin/pkg/tls"
 	"github.com/coredns/coredns/plugin/pkg/transport"
+
+	"github.com/miekg/dns"
 )
 
 func init() { plugin.Register("forward", setup) }
@@ -204,7 +206,11 @@ func parseBlock(c *caddy.Controller, f *Forward) error {
 				if !c.NextArg() {
 					return c.ArgErr()
 				}
-				f.opts.hcDomain = c.Val()
+				hcDomain := c.Val()
+				if _, ok := dns.IsDomainName(hcDomain); !ok {
+					return fmt.Errorf("health_check: invalid domain name %s", hcDomain)
+				}
+				f.opts.hcDomain = plugin.Name(hcDomain).Normalize()
 			default:
 				return fmt.Errorf("health_check: unknown option %s", hcOpts)
 			}
