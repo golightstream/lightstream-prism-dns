@@ -40,10 +40,10 @@ type External struct {
 	Next  plugin.Handler
 	Zones []string
 
-	hostmaster 	string
-	apex       	string
-	ttl        	uint32
-	headless 	bool
+	hostmaster string
+	apex       string
+	ttl        uint32
+	headless   bool
 
 	upstream *upstream.Upstream
 
