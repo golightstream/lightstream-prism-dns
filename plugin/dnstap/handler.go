@@ -18,8 +18,8 @@ type Dnstap struct {
 
 	// IncludeRawMessage will include the raw DNS message into the dnstap messages if true.
 	IncludeRawMessage bool
-	Identity []byte
-	Version []byte
+	Identity          []byte
+	Version           []byte
 }
 
 // TapMessage sends the message m to the dnstap interface.
