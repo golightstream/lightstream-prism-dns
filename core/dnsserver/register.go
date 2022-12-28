@@ -150,6 +150,9 @@ func (h *dnsContext) MakeServers() ([]caddy.Server, error) {
 
 		// Fork TLSConfig for each encrypted connection
 		c.TLSConfig = c.firstConfigInBlock.TLSConfig.Clone()
+		c.ReadTimeout = c.firstConfigInBlock.ReadTimeout
+		c.WriteTimeout = c.firstConfigInBlock.WriteTimeout
+		c.IdleTimeout = c.firstConfigInBlock.IdleTimeout
 		c.TsigSecret = c.firstConfigInBlock.TsigSecret
 	}
 
@@ -223,7 +226,8 @@ func (c *Config) AddPlugin(m plugin.Plugin) {
 }
 
 // registerHandler adds a handler to a site's handler registration. Handlers
-//  use this to announce that they exist to other plugin.
+//
+//	use this to announce that they exist to other plugin.
 func (c *Config) registerHandler(h plugin.Handler) {
 	if c.registry == nil {
 		c.registry = make(map[string]plugin.Handler)
