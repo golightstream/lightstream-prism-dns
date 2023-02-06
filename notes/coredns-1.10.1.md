@@ -8,6 +8,7 @@ author = "coredns"
 +++
 
 This release fixes some bugs, and adds some new features including:
+* Corrected architecture labels in multi-arch image manifest
 * A new plugin *timeouts* that allows configuration of server listener timeout durations
 * *acl* can drop queries as an action
 * *template* supports creating responses with extended DNS errors
@@ -46,3 +47,4 @@ sanyo0714
 * Workaround for incorrect architecture (https://github.com/coredns/coredns/pull/5691)
 * plugin/loadbalance: Add weighted policy (https://github.com/coredns/coredns/pull/5662)
 * plugin/cache: Add keepttl option (https://github.com/coredns/coredns/pull/5879)
+* plugin/forward: Fix dnstap for forwarded request/response (https://github.com/coredns/coredns/pull/5890)
