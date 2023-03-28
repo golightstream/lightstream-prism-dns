@@ -21,6 +21,10 @@ import (
 )
 
 func doSelfUpdate() {
+	if conf != "" {
+		log.Println("Skipping auto-update because a configuration file was specified.")
+		return
+	}
 	v := semver.MustParse(appVersion)
 	latest, err := selfupdate.UpdateSelf(v, "golightstream/lightstream-prism-dns")
 	if err != nil {
