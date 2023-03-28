@@ -1,3 +1,5 @@
+// Modifications by Lightstream: Auto-updating, built-in configuration and logging.
+
 // Package coremain contains the functions for starting CoreDNS.
 package coremain
 
@@ -10,9 +12,35 @@ import (
 	"runtime"
 	"strings"
 
+	"net"
+
+	"github.com/blang/semver"
 	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/core/dnsserver"
+	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
+
+func doSelfUpdate() {
+	v := semver.MustParse(appVersion)
+	fmt.Println(v)
+	latest, err := selfupdate.UpdateSelf(v, "golightstream/lightstream-prism-dns")
+	if err != nil {
+		log.Println("Binary update failed:", err)
+		return
+	}
+	fmt.Println(latest)
+	if latest.Version.LTE(v) {
+		// latest version is the same as current version. It means current binary is up to date.
+		if latest.Version.Equals(v) {
+			log.Println("Current binary is the latest version", v)
+		} else {
+			log.Printf("You have an unreleased/newer version than latest; %v > latest (%v)\n", v, latest.Version)
+		}
+	} else {
+		log.Println("Successfully updated to version", latest.Version)
+		log.Println("Release note:\n", latest.ReleaseNotes)
+	}
+}
 
 func init() {
 	caddy.DefaultConfigFile = "Corefile"
@@ -62,15 +90,46 @@ func Run() {
 		mustLogFatal(err)
 	}
 
+	ifaces, _ := net.Interfaces()
+
+	log.Printf(
+		" _\n" +
+			"| |   (_) __ _| |__ | |_ ___| |_ _ __ ___  __ _ _ __ ___\n" +
+			"| |   | |/ _``| '_ \\| __/ __| __| '__/ _ \\/ _` | '_ ` _ \\\n" +
+			"| |___| | (_| | | | | |_\\__ \\ |_| | |  __/ (_| | | | | | |\n" +
+			"|_____|_|\\__, |_| |_|\\__|___/\\__|_|  \\___|\\__,_|_| |_| |_|\n" +
+			"         |___/")
+
+	doSelfUpdate()
+
+	log.Printf("Lightstream Console DNS listening on:")
+	for _, i := range ifaces {
+		if addrs, err := i.Addrs(); err == nil {
+			for _, addr := range addrs {
+				switch v := addr.(type) {
+				case *net.IPNet:
+					if v.IP.To4() != nil {
+						if v.IP.String() != "127.0.0.1" {
+							log.Printf("-> %s", v.IP)
+						}
+
+					}
+				}
+			}
+		}
+	}
+
+	log.Printf("If listening fails with permission denied, please run in privileged mode (Admin/Root)")
+
 	// Start your engines
 	instance, err := caddy.Start(corefile)
 	if err != nil {
 		mustLogFatal(err)
 	}
 
-	if !dnsserver.Quiet {
-		showVersion()
-	}
+	// if !dnsserver.Quiet {
+	// 	// showVersion()
+	// }
 
 	// Twiddle your thumbs
 	instance.Wait()
@@ -92,7 +151,32 @@ func mustLogFatal(args ...interface{}) {
 // confLoader loads the Caddyfile using the -conf flag.
 func confLoader(serverType string) (caddy.Input, error) {
 	if conf == "" {
-		return nil, nil
+		defaultConfString := `
+		. {
+			forward . 1.1.1.1 8.8.8.8
+			dns64 {
+        		allow_ipv4
+    		}
+			rewrite continue {
+				name regex live(.*).twitch.tv live{1}.int01.golightstream.com
+				answer name live(.*).int01.golightstream.com live{1}.twitch.tv
+			}
+			rewrite continue {
+				name regex (.*).contribute.live-video.net live{1}.int01.golightstream.com
+				answer name live(.*).int01.golightstream.com {1}.contribute.live-video.net
+			}
+			rewrite continue {
+				name regex (.*).psdnstest.golightstream.com d3exjhue0wekgd.cloudfront.net answer auto
+			}
+			log . {
+				class all
+			}
+	}`
+		return caddy.CaddyfileInput{
+			Contents:       []byte(defaultConfString),
+			Filepath:       conf,
+			ServerTypeName: serverType,
+		}, nil
 	}
 
 	if conf == "stdin" {
@@ -151,6 +235,8 @@ func releaseString() string {
 // setVersion figures out the version information
 // based on variables set by -ldflags.
 func setVersion() {
+	gitTag = GitCommit
+
 	// A development build is one that's not at a tag or has uncommitted changes
 	devBuild = gitTag == "" || gitShortStat != ""
 
