@@ -9,6 +9,7 @@ Visit [psdnscheck.golightstream.com](https://psdnscheck.golightstream.com/) to i
 ### **Downloads**:
 
 [![Download for Windows](https://img.shields.io/badge/Windows-64bit-blue)](https://github.com/golightstream/lightstream-prism-dns/releases/download/v2.1.0/lightstream-prism-dns-windows-amd64.exe)
+[![Download for MacOS Intel](https://img.shields.io/badge/Mac-Intel-orange)](https://github.com/golightstream/lightstream-prism-dns/releases/download/v2.1.0/lightstream-prism-dns-darwin-amd64)
 [![Download for MacOS M1](https://img.shields.io/badge/Mac-M1-orange)](https://github.com/golightstream/lightstream-prism-dns/releases/download/v2.1.0/lightstream-prism-dns-darwin-arm64)
 [![Download for Linux ARM](https://img.shields.io/badge/Linux-64bit-red)](https://github.com/golightstream/lightstream-prism-dns/releases/download/v2.1.0/lightstream-prism-dns-linux-amd64)
 [![Download for Linux 32bit](https://img.shields.io/badge/Linux-32bit-red)](https://github.com/golightstream/lightstream-prism-dns/releases/download/v2.1.0/lightstream-prism-dns-linux-386)
