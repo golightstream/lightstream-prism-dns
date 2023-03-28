@@ -1,5 +1,5 @@
 # Makefile for building CoreDNS
-GITCOMMIT:=$(shell git describe --dirty --always)
+GITCOMMIT:=v2.1.0
 BINARY:=coredns
 SYSTEM:=
 CHECKS:=check
